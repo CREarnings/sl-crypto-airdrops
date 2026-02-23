@@ -357,18 +357,39 @@ function clearSession(){sessionStorage.removeItem(SESS_KEY);ME=null;}
 
 // ══════ INIT ══════
 (async function init(){
-  const gistId=await getGistId();
+  // Show spinner while loading
+  document.body.insertAdjacentHTML('afterbegin',
+    '<div id="initLoader" style="position:fixed;inset:0;background:#0a0a0a;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:1rem;">'
+    +'<div style="font-family:Orbitron,monospace;font-size:1.3rem;font-weight:900;color:#ff0000;letter-spacing:2px;">CR<span style=\'color:#f0f0f0\'>Earnings</span></div>'
+    +'<div style="width:18px;height:18px;border:2px solid #2a2a2a;border-top-color:#ff0000;border-radius:50%;animation:spin .7s linear infinite;"></div>'
+    +'</div>'
+  );
 
-  if(gistId){
-    // We know where the database is – either login or dashboard
-    const s=getSession();
-    if(s){ME=s;await showDashboard();return;}
-    showScreen('loginScreen');
-    return;
+  function hideLoader(){const l=document.getElementById('initLoader');if(l)l.remove();}
+
+  try{
+    const gistId=await getGistId();
+
+    if(gistId){
+      // Gist ID known - check if admins exist
+      const data=await fetchGist();
+      if(data&&data.admins&&data.admins.length>0){
+        // Fully configured - login or dashboard
+        const s=getSession();
+        if(s){ME=s;hideLoader();await showDashboard();return;}
+        hideLoader();showScreen('loginScreen');return;
+      }
+      // Gist ID known but no admins yet - show setup to finish
+      hideLoader();showScreen('setupScreen');return;
+    }
+
+    // No gist ID at all - brand new install
+    hideLoader();showScreen('setupScreen');
+
+  }catch(e){
+    console.error('Init error:',e);
+    hideLoader();showScreen('setupScreen');
   }
-
-  // No gist ID anywhere → first time setup
-  showScreen('setupScreen');
 })();
 
 function showScreen(id){
