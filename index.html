@@ -194,6 +194,18 @@ function applyTheme(){const dark=currentTheme==='dark'||(currentTheme==='system'
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme);
 setTheme(currentTheme);
 
+// ══════ Smooth scroll without hash in URL ══════
+document.querySelectorAll('nav a').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const targetId = link.getAttribute('href');
+    const targetElement = document.querySelector(targetId);
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+});
+
 // ══════ DATA ══════
 let allArticles=[],allAds={left:[],right:[],bottom:[]},currentPage=1;
 const PER_PAGE=10;
@@ -330,3 +342,4 @@ setInterval(loadData,5*60*1000);
 </body>
 
 </html>
+
