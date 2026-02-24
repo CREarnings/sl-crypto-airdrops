@@ -55,6 +55,54 @@
     .ref-row input{flex:1;}
     .ref-row button{background:transparent;border:1px solid var(--cr-border);color:var(--cr-muted);width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:1rem;transition:all .2s;}
     .ref-row button:hover{border-color:var(--cr-red);color:var(--cr-red);}
+
+    /* ── Mobile & Tablet Responsive ── */
+    @media(max-width:600px){
+      /* Setup & Login screens */
+      #setupScreen,#loginScreen{padding:.75rem;}
+      .logo{font-size:1.1rem;}
+      .panel{padding:1rem;}
+      .info-box,.setup-box{font-size:.78rem;padding:.75rem;}
+      /* Dashboard header */
+      #adminDashboard>header{padding:0 .75rem;height:auto;min-height:56px;flex-wrap:wrap;gap:.5rem;padding-top:.5rem;padding-bottom:.5rem;}
+      #adminDashboard>header .logo{font-size:1rem;}
+      #adminDashboard>header>div:last-child{gap:.35rem;flex-wrap:wrap;}
+      #adminDashboard>header>div:last-child #loggedAsLabel{font-size:.65rem;width:100%;text-align:right;}
+      .btn-ghost,.btn-red{padding:6px 12px;font-size:.78rem;}
+      /* Tab bar */
+      #adminDashboard>div[style*="border-bottom"]{padding:0 .5rem;}
+      .tab-btn{font-size:.6rem;padding:8px 10px;letter-spacing:.5px;}
+      /* Content */
+      #adminDashboard>div[style*="max-width"]{padding:1rem .75rem 3rem;}
+      .article-row{gap:.6rem;}
+      .article-row img,.thumb-placeholder{width:40px;height:40px;}
+      .article-row>div[style*="flex:1"]>div:first-child{font-size:.82rem;}
+      /* Modals */
+      .modal-backdrop{padding:1rem .5rem;}
+      .modal-box{padding:1.25rem;border-radius:10px;}
+      .section-title{font-size:.85rem;}
+      /* Admin rows */
+      .admin-row{gap:.6rem;}
+      .admin-row>div[style*="flex:1"]>div:first-child{font-size:.82rem;}
+      /* Ad rows */
+      .ad-row{gap:.5rem;}
+      .ad-row>div[style*="flex:1"]>div{font-size:.78rem;}
+      /* Toast */
+      .toast{bottom:1rem;right:.75rem;left:.75rem;max-width:none;}
+      /* Ref links */
+      .ref-row{flex-wrap:wrap;}
+      .ref-row input{min-width:0;}
+    }
+    @media(max-width:400px){
+      .tab-btn{font-size:.55rem;padding:8px 8px;}
+      .article-row{flex-wrap:wrap;}
+      .article-row>div[style*="display:flex;gap:6px"]{width:100%;justify-content:flex-end;}
+    }
+    @media(min-width:601px) and (max-width:900px){
+      #adminDashboard>header{padding:0 1rem;}
+      #adminDashboard>div[style*="max-width"]{padding:1.5rem 1rem 3rem;}
+      .modal-backdrop{padding:1.5rem .75rem;}
+    }
   </style>
 </head>
 <body>
