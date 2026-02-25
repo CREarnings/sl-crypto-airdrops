@@ -624,12 +624,24 @@ async function saveAnalyticsToken(){
       status.textContent="⚠ Saved locally only (no repo configured). Visitors cannot be tracked until you deploy site-config.json.";
       status.style.color='#ff9900';btn.textContent='Save Analytics Token';btn.disabled=false;return;
     }
-    // Read current site-config.json
+    // Read current site-config.json — must get fresh SHA or GitHub returns 409
     const repoOwner=cfg.repoOwner,repoName=cfg.repoName;
     let sha=null;
-    const get=await fetch('https://api.github.com/repos/'+repoOwner+'/'+repoName+'/contents/site-config.json',{headers:{'Authorization':'token '+adminToken,'Accept':'application/vnd.github.v3+json'}});
     let currentConfig={gistId};
-    if(get.ok){const gd=await get.json();sha=gd.sha;try{currentConfig=JSON.parse(atob(gd.content.replace(/\n/g,'')));}catch(e){}}
+    const apiUrl='https://api.github.com/repos/'+repoOwner+'/'+repoName+'/contents/site-config.json';
+    // Use cache-busting and no-cache headers to always get fresh SHA
+    const get=await fetch(apiUrl+'?t='+Date.now(),{cache:'no-store',headers:{'Authorization':'token '+adminToken,'Accept':'application/vnd.github.v3+json','Cache-Control':'no-cache'}});
+    if(get.ok){
+      const gd=await get.json();
+      sha=gd.sha;
+      try{currentConfig=JSON.parse(atob(gd.content.replace(/\n/g,'')));}catch(e){}
+    } else if(get.status===409){
+      // 409 on GET means repo is empty — file doesn't exist yet, proceed without SHA
+      sha=null;
+    } else if(!get.ok){
+      status.textContent='Could not read site-config.json ('+get.status+') — check repo owner/name';
+      status.style.color='#ff4444';btn.textContent='Save Analytics Token';btn.disabled=false;return;
+    }
     currentConfig.analyticsToken=t;
     const content=btoa(unescape(encodeURIComponent(JSON.stringify(currentConfig,null,2))));
     const body={message:'chore: add analytics token',content};
@@ -640,7 +652,9 @@ async function saveAnalyticsToken(){
       status.style.color='#00cc44';
       document.getElementById('analyticsTokenInput').value='';
     } else {
-      status.textContent='Failed to write site-config.json (check admin token permissions)';status.style.color='#ff4444';
+      const errBody=await put.json().catch(()=>({}));
+      status.textContent='Failed ('+put.status+'): '+(errBody.message||'check admin token permissions');
+      status.style.color='#ff4444';
     }
   }catch(e){
     status.textContent='Error: '+e.message;status.style.color='#ff4444';
