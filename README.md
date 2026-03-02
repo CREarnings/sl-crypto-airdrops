@@ -209,4 +209,4 @@ The GitHub token is **only stored locally** on the admin's browser — it is nev
 
 </details>
 
-See the [LICENSE](../../?tab=License-1-ov-file) file.
+See the [LICENSE](https://github.com/CREarnings/sl-crypto-airdrops/?tab=License-1-ov-file) file.
