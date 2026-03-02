@@ -186,4 +186,4 @@ The GitHub token is **only stored locally** on the admin's browser — it is nev
 
 ## 📄 License
 © CR Earnings. All rights reserved.  
-See the [`LICENSE`](LICENSE) file.
+See the [`LICENSE`](?tab=License-1-ov-file) file.
