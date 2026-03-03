@@ -43,9 +43,10 @@
     .admin-row:hover{border-color:var(--cr-red);}
     .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--cr-border);border-top-color:var(--cr-red);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-left:4px;}
     @keyframes spin{to{transform:rotate(360deg);}}
-    .setup-box{background:rgba(255,0,0,.05);border:1px solid var(--cr-red);border-radius:10px;padding:1rem;margin-bottom:1rem;font-size:.82rem;line-height:1.6;}
     .info-box{background:rgba(0,150,255,.05);border:1px solid #44aaff;border-radius:10px;padding:1rem;margin-bottom:1rem;font-size:.82rem;line-height:1.6;color:#aad4ff;}
+    .warn-box{background:rgba(255,150,0,.05);border:1px solid #ff9900;border-radius:10px;padding:1rem;margin-bottom:1rem;font-size:.82rem;line-height:1.6;color:#ffcc88;}
     .superadmin-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:0.65rem;font-weight:700;background:rgba(255,0,0,.15);color:var(--cr-red);border:1px solid var(--cr-red);}
+    .owner-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:0.65rem;font-weight:700;background:rgba(255,200,0,.15);color:#ffcc00;border:1px solid #ffcc00;}
     .sync-status{font-size:.72rem;color:var(--cr-muted);font-family:'Orbitron',monospace;letter-spacing:1px;}
     .sync-status.ok{color:#00cc44;}
     .sync-status.err{color:#ff4444;}
@@ -59,63 +60,42 @@
 </head>
 <body>
 
-<!-- ══════ SETUP SCREEN ══════ -->
-<div id="setupScreen" style="display:none;min-height:100vh;align-items:center;justify-content:center;padding:1rem;">
-  <div style="width:100%;max-width:500px;">
-    <div style="text-align:center;margin-bottom:2rem;">
-      <div class="logo">CR<span>Earnings</span></div>
-      <div style="font-size:.75rem;color:var(--cr-muted);margin-top:4px;letter-spacing:1px;font-family:'Orbitron',monospace;">FIRST TIME SETUP</div>
-    </div>
-    <div class="panel">
-      <div class="setup-box">
-        <strong style="color:var(--cr-red);">⚠️ One-time setup required</strong><br/>
-        CR Earnings uses a <strong>GitHub Gist</strong> as a free database so all visitors see the same articles. This only needs to be done once.
-      </div>
-      <div class="info-box">
-        <strong>How to set up:</strong><br/>
-        1. Go to <a href="https://gist.github.com" target="_blank" style="color:#88ccff;">gist.github.com</a> → New secret gist<br/>
-        2. Filename: <code>cr-data.json</code> · Content: <code>{}</code> → Click <strong>Create secret gist</strong><br/>
-        3. Copy the <strong>Gist ID</strong> from the URL (long code after your username)<br/>
-        4. Go to <a href="https://github.com/settings/tokens" target="_blank" style="color:#88ccff;">GitHub → Settings → Developer settings → Personal access tokens (classic)</a><br/>
-        5. Generate token → tick <strong>gist</strong> and <strong>repo</strong> scopes → copy it<br/>
-        6. Enter your GitHub username and the repo name where this site is hosted<br/>
-        7. Fill in below 👇
-      </div>
-      <div class="field"><label>GitHub Gist ID</label><input type="text" id="setupGistId" placeholder="abc123def456..." /></div>
-      <div class="field"><label>GitHub Personal Access Token</label><input type="password" id="setupGistToken" placeholder="ghp_xxxxxxxxxxxx" /></div>
-      <div class="field"><label>Your GitHub Username</label><input type="text" id="setupRepoOwner" placeholder="e.g. theshanbmr" /></div>
-      <div class="field"><label>Your Repo Name</label><input type="text" id="setupRepoName" placeholder="e.g. cr-earnings" /></div>
-      <div class="field"><label>Your Admin Username</label><input type="text" id="setupUsername" placeholder="superadmin" /></div>
-      <div class="field"><label>Your Admin Password</label><input type="password" id="setupPassword" /></div>
-      <div class="field"><label>Confirm Password</label><input type="password" id="setupPassword2" /></div>
-      <div id="setupError" style="color:#ff4444;font-size:.8rem;margin-bottom:.75rem;display:none;"></div>
-      <button class="btn-red" style="width:100%;" id="setupBtn" onclick="doSetup()">Complete Setup</button>
-    </div>
-  </div>
-</div>
-
 <!-- ══════ LOGIN SCREEN ══════ -->
 <div id="loginScreen" style="display:none;min-height:100vh;align-items:center;justify-content:center;padding:1rem;">
-  <div style="width:100%;max-width:380px;">
+  <div style="width:100%;max-width:420px;">
     <div style="text-align:center;margin-bottom:2rem;">
       <div class="logo">CR<span>Earnings</span></div>
       <div style="font-size:.75rem;color:var(--cr-muted);margin-top:4px;letter-spacing:1px;font-family:'Orbitron',monospace;">ADMIN PANEL</div>
     </div>
     <div class="panel">
-      <div class="field"><label>Username</label><input type="text" id="loginUsername" autocomplete="off" /></div>
-      <div class="field"><label>Password</label><input type="password" id="loginPassword" /></div>
-      <div id="loginTokenWrap">
-        <div class="field">
-          <label style="display:flex;align-items:center;justify-content:space-between;">
-            <span>GitHub Token <span id="tokenRequiredBadge" style="display:none;color:#ff4444;font-size:.7rem;font-weight:700;">● Required to save changes</span></span>
-            <span id="tokenSavedBadge" style="color:#00cc44;font-size:.7rem;display:none;">✔ Token saved</span>
-          </label>
-          <input type="password" id="loginToken" placeholder="ghp_xxxxxxxxxxxx" />
-          <div style="font-size:.68rem;color:var(--cr-muted);margin-top:4px;">Needed to add/edit content. Saved in this browser only.</div>
+      <div class="info-box">
+        <strong>🔐 GitHub Identity Login</strong><br/>
+        Enter your <strong>GitHub Personal Access Token</strong> (PAT) and your <strong>Private Admin Gist ID</strong>.
+        Your GitHub account identity is verified automatically — no password needed.
+      </div>
+
+      <div class="field">
+        <label>GitHub Token (PAT)
+          <span style="color:var(--cr-muted);font-weight:400;font-size:.68rem;"> — needs <code>gist</code> scope only</span>
+        </label>
+        <input type="password" id="loginToken" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off" />
+        <div style="font-size:.68rem;color:var(--cr-muted);margin-top:4px;">
+          Create at: <a href="https://github.com/settings/tokens" target="_blank" style="color:#88ccff;">github.com/settings/tokens</a> — tick <strong>gist</strong> only.
         </div>
       </div>
+
+      <div class="field">
+        <label>Private Admin Gist ID
+          <span style="color:var(--cr-muted);font-weight:400;font-size:.68rem;"> — the secret gist containing cr-admin.json</span>
+        </label>
+        <input type="text" id="loginAdminGistId" placeholder="e.g. a1b2c3d4e5f6..." autocomplete="off" />
+        <div style="font-size:.68rem;color:var(--cr-muted);margin-top:4px;">
+          This ID is never stored in any public file. Keep it private.
+        </div>
+      </div>
+
       <div id="loginError" style="color:#ff4444;font-size:.8rem;margin-bottom:.75rem;display:none;"></div>
-      <button class="btn-red" style="width:100%;" id="loginBtn" onclick="doLogin()">Login</button>
+      <button class="btn-red" style="width:100%;" id="loginBtn" onclick="doLogin()">Login with GitHub Token</button>
     </div>
     <p style="text-align:center;font-size:.7rem;color:var(--cr-muted);margin-top:1rem;">
       <a href="./" style="color:var(--cr-muted);">← Back to Site</a>
@@ -146,6 +126,8 @@
   </div>
 
   <div style="max-width:1000px;margin:0 auto;padding:2rem 1.5rem 4rem;">
+
+    <!-- ── ARTICLES TAB ── -->
     <div id="tabArticles">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
         <div class="section-title" style="margin:0;">Manage Airdrops</div>
@@ -157,6 +139,7 @@
       <div id="articlesList"><div style="text-align:center;padding:2rem;color:var(--cr-muted);">Loading<span class="spinner"></span></div></div>
     </div>
 
+    <!-- ── ADS TAB ── -->
     <div id="tabAds" style="display:none;">
       <div class="section-title">Manage Advertisements</div>
       <div class="panel" style="margin-bottom:1.5rem;">
@@ -176,19 +159,30 @@
       </div>
     </div>
 
+    <!-- ── ADMINS TAB ── -->
     <div id="tabAdmins" style="display:none;">
       <div class="section-title">Admin Accounts</div>
-      <div id="superadminOnlyMsg" style="display:none;" class="info-box">Only the <strong>Super Admin</strong> can manage admin accounts.</div>
+      <!--
+        Role hierarchy (enforced in JS — never trust client-only, but this is static hosting):
+          owner       → can add/remove superAdmins, all lower roles
+          superAdmin  → can add/remove admins, cannot touch owner or superAdmins
+          admin       → can edit articles/ads only, no user management
+      -->
+      <div id="adminAccessDenied" style="display:none;" class="warn-box">
+        Only <strong>Super Admins</strong> and the <strong>Owner</strong> can manage admin accounts.
+      </div>
       <div id="adminManagePanel">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
-          <p style="font-size:.85rem;color:var(--cr-muted);">All admins can add/edit/delete articles and ads. Only Super Admin can add/remove admins.</p>
-          <button class="btn-red" onclick="openAdminForm()">+ Add Admin</button>
+          <p style="font-size:.85rem;color:var(--cr-muted);">
+            Admins can edit content. Super Admins can add/remove admins. Only the Owner can change Super Admins.
+          </p>
+          <button class="btn-red" id="addAdminBtn" onclick="openAdminForm()">+ Add Admin</button>
         </div>
         <div id="adminsList"></div>
       </div>
     </div>
 
-
+    <!-- ── STATS TAB ── -->
     <div id="tabStats" style="display:none;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
         <div class="section-title" style="margin:0;">Site Statistics</div>
@@ -229,60 +223,60 @@
         </div>
       </div>
       <div class="info-box" style="font-size:.75rem;">
-        📌 Analytics stored in your GitHub Gist. Tracking only writes when a GitHub token is present in the browser — visit the site while logged into admin to record data.
+        📌 Analytics stored in your public GitHub Gist. Tracking fires silently for all visitors when an analytics token is set in site-config.json.
       </div>
     </div>
 
+    <!-- ── SETTINGS TAB ── -->
     <div id="tabSettings" style="display:none;">
-      <div class="section-title">My Account Settings</div>
+      <div class="section-title">Session &amp; Settings</div>
+
       <div class="panel" style="max-width:500px;">
-        <p style="font-size:.8rem;color:var(--cr-muted);margin-bottom:1.25rem;">Change your own login credentials. Leave new password blank to keep unchanged.</p>
-        <div class="field"><label>New Username</label><input type="text" id="newUsername" /></div>
-        <div class="field"><label>New Password</label><input type="password" id="newPassword" placeholder="Leave blank to keep current" /></div>
-        <div class="field"><label>Confirm New Password</label><input type="password" id="confirmPassword" /></div>
-        <div class="field"><label>Current Password (required to confirm)</label><input type="password" id="currentPasswordVerify" /></div>
-
-        <!-- Admin Shortcut Setting -->
-        <div class="field">
-          <label>Admin Panel Shortcut</label>
-          <p style="font-size:.7rem;color:var(--cr-muted);margin-bottom:4px;">Press keys (e.g., Ctrl+Alt+A) then click Set</p>
-          <div style="display:flex;gap:8px;">
-            <input type="text" id="shortcutDisplay" readonly placeholder="Press keys" value="Ctrl+Alt+A" style="flex:1;" />
-            <button class="btn-red" id="captureShortcutBtn" onclick="startCaptureShortcut()">Set</button>
-            <button class="btn-ghost" id="resetShortcutBtn" onclick="resetShortcut()">Reset</button>
-          </div>
-        </div>
-
-        <button class="btn-red" id="saveSettingsBtn" onclick="saveSettings()">Save Changes</button>
+        <div style="font-family:'Orbitron',monospace;font-size:.8rem;color:var(--cr-red);letter-spacing:1px;margin-bottom:.75rem;">🔒 CURRENT SESSION</div>
+        <p style="font-size:.8rem;color:var(--cr-muted);margin-bottom:1rem;line-height:1.6;">
+          Your GitHub token is stored <strong style="color:var(--cr-text);">in memory only</strong> — it is never written to localStorage or any permanent storage.
+          Closing this tab will clear it. This is intentional for security.
+        </p>
+        <div id="sessionInfo" style="font-size:.82rem;line-height:1.8;"></div>
       </div>
 
+      <!-- Admin Panel Shortcut -->
+      <div class="panel" style="max-width:500px;margin-top:1.5rem;">
+        <div style="font-family:'Orbitron',monospace;font-size:.8rem;color:var(--cr-red);letter-spacing:1px;margin-bottom:.75rem;">⌨️ ADMIN PANEL SHORTCUT</div>
+        <p style="font-size:.7rem;color:var(--cr-muted);margin-bottom:8px;">Press keys (e.g., Ctrl+Alt+A) then click Set</p>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="shortcutDisplay" readonly placeholder="Press keys" value="Ctrl+Alt+A" style="flex:1;" />
+          <button class="btn-red" id="captureShortcutBtn" onclick="startCaptureShortcut()">Set</button>
+          <button class="btn-ghost" id="resetShortcutBtn" onclick="resetShortcut()">Reset</button>
+        </div>
+      </div>
+
+      <!-- Repo Settings (needed for site-config.json writes) -->
       <div class="panel" style="max-width:500px;margin-top:1.5rem;">
         <div style="font-family:'Orbitron',monospace;font-size:.8rem;color:var(--cr-red);letter-spacing:1px;margin-bottom:.75rem;">🔗 REPO SETTINGS</div>
-        <p style="font-size:.8rem;color:var(--cr-muted);margin-bottom:1rem;">Required for saving analytics token to <code style="background:#1a1a1a;padding:1px 5px;border-radius:3px;">site-config.json</code>. These should match your GitHub repo.</p>
-        <div class="field"><label>GitHub Username (Repo Owner)</label><input type="text" id="repoOwnerInput" placeholder="e.g. theshanbmr" /></div>
-        <div class="field"><label>Repo Name</label><input type="text" id="repoNameInput" placeholder="e.g. cr-earnings" /></div>
+        <p style="font-size:.8rem;color:var(--cr-muted);margin-bottom:1rem;">Required for saving the analytics token to <code style="background:#1a1a1a;padding:1px 5px;border-radius:3px;">site-config.json</code>.</p>
+        <div class="field"><label>GitHub Username (Repo Owner)</label><input type="text" id="repoOwnerInput" placeholder="e.g. CREarnings" /></div>
+        <div class="field"><label>Repo Name</label><input type="text" id="repoNameInput" placeholder="e.g. sl-crypto-airdrops" /></div>
         <div style="display:flex;gap:.5rem;align-items:center;">
           <button class="btn-red" onclick="saveRepoSettings()">Save Repo Settings</button>
           <span id="repoSettingsStatus" style="font-size:.75rem;"></span>
         </div>
       </div>
 
+      <!-- Analytics Token (public, fine-grained, gist-only) -->
       <div class="panel" style="max-width:500px;margin-top:1.5rem;">
         <div style="font-family:'Orbitron',monospace;font-size:.8rem;color:var(--cr-red);letter-spacing:1px;margin-bottom:.75rem;">📊 ANALYTICS TOKEN</div>
         <p style="font-size:.8rem;color:var(--cr-muted);margin-bottom:1rem;line-height:1.6;">
-          Create a <strong style="color:var(--cr-text);">GitHub Fine-Grained PAT</strong> with only <strong style="color:var(--cr-text);">Gist → Read & Write</strong> permission. Paste it below — it will be saved to <code style="background:#1a1a1a;padding:1px 5px;border-radius:3px;">site-config.json</code> so <strong style="color:var(--cr-text);">all visitors</strong> can be tracked, not just admins.
+          Create a <strong style="color:var(--cr-text);">GitHub Fine-Grained PAT</strong> with only <strong style="color:var(--cr-text);">Gist → Read &amp; Write</strong>.
+          This token is saved publicly in <code style="background:#1a1a1a;padding:1px 5px;border-radius:3px;">site-config.json</code> so all visitors can be tracked.
         </p>
-        <div class="info-box" style="font-size:.75rem;margin-bottom:1rem;">
-          ⚠️ This token is publicly readable (it's in site-config.json). Use a <strong>fine-grained PAT scoped only to Gist</strong> — it cannot access your repos, account, or any private data.
-          <br/><br/>
-          Create one at: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" style="color:var(--cr-red);">github.com/settings/personal-access-tokens/new</a><br/>
+        <div class="warn-box" style="font-size:.75rem;margin-bottom:1rem;">
+          ⚠️ Use a <strong>fine-grained PAT scoped only to Gist</strong> here — it cannot access your account, repos, or private data.<br/><br/>
+          Create at: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" style="color:var(--cr-red);">github.com/settings/personal-access-tokens/new</a><br/>
           → Resource owner: your account → Repository access: None → Permissions: <strong>Gist → Read and write</strong>
         </div>
         <div class="field">
-          <label style="display:flex;justify-content:space-between;">
-            Analytics Token
-            <span id="analyticsTokenStatus" style="font-size:.7rem;"></span>
-          </label>
+          <label style="display:flex;justify-content:space-between;">Analytics Token<span id="analyticsTokenStatus" style="font-size:.7rem;"></span></label>
           <input type="password" id="analyticsTokenInput" placeholder="github_pat_xxxxxxxxxxxx" />
         </div>
         <div style="display:flex;gap:.5rem;">
@@ -291,11 +285,11 @@
         </div>
       </div>
     </div>
-    </div>
+
   </div>
 </div>
 
-<!-- MODALS -->
+<!-- ══════ ARTICLE MODAL ══════ -->
 <div class="modal-backdrop" id="articleModal">
   <div class="modal-box">
     <button onclick="closeModal('articleModal')" style="position:absolute;top:12px;right:12px;background:transparent;border:1px solid var(--cr-border);color:var(--cr-text);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;">✕</button>
@@ -305,14 +299,11 @@
     <div class="field"><label>Description *</label><textarea id="artDesc" rows="6" placeholder="Full details..."></textarea></div>
     <div class="field"><label>Cover Image URL</label><input type="url" id="artImage" /></div>
     <div class="field"><label>YouTube Video URL or ID</label><input type="text" id="artYt" /></div>
-
-    <!-- Referral Links Section -->
     <div class="field">
       <label>Referral Links (optional)</label>
       <div id="refLinksContainer"></div>
       <button type="button" class="btn-ghost" style="margin-top:6px;" onclick="addRefLinkField()">+ Add Referral Link</button>
     </div>
-
     <div class="field">
       <label>Status</label>
       <select id="artStatus" onchange="document.getElementById('scheduleField').style.display=this.value==='scheduled'?'block':'none'">
@@ -322,7 +313,7 @@
       </select>
     </div>
     <div class="field" id="scheduleField" style="display:none;">
-      <label>Schedule Date & Time</label>
+      <label>Schedule Date &amp; Time</label>
       <input type="datetime-local" id="artSchedule" />
     </div>
     <div style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.5rem;">
@@ -332,6 +323,7 @@
   </div>
 </div>
 
+<!-- ══════ AD MODAL ══════ -->
 <div class="modal-backdrop" id="adModal">
   <div class="modal-box" style="max-width:480px;">
     <button onclick="closeModal('adModal')" style="position:absolute;top:12px;right:12px;background:transparent;border:1px solid var(--cr-border);color:var(--cr-text);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;">✕</button>
@@ -348,19 +340,29 @@
   </div>
 </div>
 
+<!-- ══════ ADMIN MODAL ══════ -->
 <div class="modal-backdrop" id="adminModal">
   <div class="modal-box" style="max-width:440px;">
     <button onclick="closeModal('adminModal')" style="position:absolute;top:12px;right:12px;background:transparent;border:1px solid var(--cr-border);color:var(--cr-text);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;">✕</button>
     <div class="section-title" id="adminFormTitle">Add Admin</div>
     <input type="hidden" id="editAdminId" />
-    <div class="field"><label>Username *</label><input type="text" id="adminUsername" autocomplete="off" /></div>
     <div class="field">
-      <label>Password <span id="adminPwNote" style="color:var(--cr-muted);font-size:.7rem;display:none;">(leave blank to keep current)</span></label>
-      <input type="password" id="adminPassword" />
+      <label>GitHub Login (username) *</label>
+      <input type="text" id="adminGithubLogin" autocomplete="off" placeholder="e.g. theshanbmr" />
+      <div style="font-size:.68rem;color:var(--cr-muted);margin-top:4px;">
+        The exact GitHub username of the person to add. They must use their own PAT to log in.
+      </div>
+    </div>
+    <div class="field" id="adminRoleField">
+      <label>Role</label>
+      <select id="adminRole">
+        <option value="admin">Admin (content editing only)</option>
+        <option value="superAdmin">Super Admin (can manage admins)</option>
+      </select>
     </div>
     <div style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.5rem;">
       <button class="btn-ghost" onclick="closeModal('adminModal')">Cancel</button>
-      <button class="btn-red" id="saveAdminBtn" onclick="saveAdmin()">Save Admin</button>
+      <button class="btn-red" id="saveAdminBtn" onclick="saveAdmin()">Save</button>
     </div>
   </div>
 </div>
@@ -368,407 +370,372 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════ SECURITY ══════
-const _P=[67,82,95,83,101,99,114,101,116,95,80,101,112,112,101,114,95,118,50,95,88,75,57].map(c=>String.fromCharCode(c)).join('');
-function crHash(s){let h1=0xdeadbeef^s.length,h2=0x41c6ce57^s.length;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677);}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return((4294967296*(2097151&h2))+(h1>>>0)).toString(16).padStart(16,'0');}
-function hashPassword(u,p){const s1=crHash(_P+'|'+u.toLowerCase()+'|'+p);const s2=crHash(s1+_P+p.length+u);return crHash(s2+'|'+_P+'|'+s1);}
-function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+// ═══════════════════════════════════════════════════════════════════
+//  AUTH & SESSION
+//
+//  Security model:
+//   - Token NEVER written to localStorage or any persistent storage.
+//   - Token lives only in the module-scoped variable below for the
+//     lifetime of this browser tab. Closing the tab = token gone.
+//   - Admin Gist ID is stored in sessionStorage only (clears on tab close).
+//   - Public Gist ID is read from site-config.json (public, safe).
+//   - Private Gist ID is NEVER in any public file or URL.
+// ═══════════════════════════════════════════════════════════════════
 
-// ══════ CONFIG ══════
-const CFG_KEY='cr_gist_config';
-function getLocalCfg(){try{return JSON.parse(localStorage.getItem(CFG_KEY)||'null');}catch{return null;}}
-function saveLocalCfg(c){if(c)localStorage.setItem(CFG_KEY,JSON.stringify(c));else localStorage.removeItem(CFG_KEY);}
+/** In-memory only — never persisted */
+let _sessionToken = null;
 
-let _cachedGistId=null;
+/** Session-only storage keys */
+const SESS_KEY        = 'cr_admin_sess_v3';   // { githubLogin, role, avatarUrl }
+const SESS_ADMIN_GIST = 'cr_admin_gist_id';   // private gist ID, session only
 
-async function getGistId(){
-  if(_cachedGistId)return _cachedGistId;
-  const loc=getLocalCfg();
-  if(loc&&loc.gistId){_cachedGistId=loc.gistId;return _cachedGistId;}
-  try{
-    const r=await fetch('site-config.json?t='+Date.now(),{cache:'no-store'});
-    if(r.ok){const d=await r.json();if(d.gistId){_cachedGistId=d.gistId;return _cachedGistId;}}
-  }catch(e){}
+function getSession()        { try { return JSON.parse(sessionStorage.getItem(SESS_KEY) || 'null'); } catch { return null; } }
+function saveSession(obj)    { sessionStorage.setItem(SESS_KEY, JSON.stringify(obj)); }
+function clearSession()      { sessionStorage.removeItem(SESS_KEY); sessionStorage.removeItem(SESS_ADMIN_GIST); _sessionToken = null; }
+function getAdminGistId()    { return sessionStorage.getItem(SESS_ADMIN_GIST) || null; }
+function setAdminGistId(id)  { sessionStorage.setItem(SESS_ADMIN_GIST, id); }
+
+/** Current logged-in user object */
+let ME = null; // { githubLogin, role, avatarUrl }
+
+/** DB state (public gist) */
+let DB = null;
+
+/** Admin ACL (private gist) — cached for session */
+let ACL = null; // { ownerLogin, superAdmins:[], admins:[] }
+
+// ═══════════════════════════════════════════════════════════════════
+//  UTILITY
+// ═══════════════════════════════════════════════════════════════════
+function genId()    { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function v(id)      { return (document.getElementById(id).value || '').trim(); }
+function esc(s)     { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtDate(d) { if (!d) return ''; return new Date(d).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }); }
+function openModal(id)  { document.getElementById(id).style.display = 'block'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+let _tt;
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(_tt);
+  _tt = setTimeout(() => t.classList.remove('show'), 3500);
+}
+function setSyncStatus(cls, text) {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  el.className = 'sync-status ' + (cls || '');
+  el.textContent = text;
+}
+function showScreen(id) {
+  ['loginScreen', 'adminDashboard'].forEach(s => {
+    const el = document.getElementById(s); if (!el) return;
+    el.style.display = s === id ? (s === 'adminDashboard' ? 'block' : 'flex') : 'none';
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  ROLE HELPERS — always check against ACL, never trust ME alone
+// ═══════════════════════════════════════════════════════════════════
+function isOwner(login)      { return ACL && ACL.ownerLogin === login; }
+function isSuperAdmin(login) { return ACL && (ACL.ownerLogin === login || (ACL.superAdmins||[]).some(a => a.githubLogin === login)); }
+function isAdmin(login)      { return ACL && ((ACL.admins||[]).some(a => a.githubLogin === login) || isSuperAdmin(login)); }
+function getRole(login) {
+  if (!ACL) return null;
+  if (ACL.ownerLogin === login) return 'owner';
+  if ((ACL.superAdmins||[]).some(a => a.githubLogin === login)) return 'superAdmin';
+  if ((ACL.admins||[]).some(a => a.githubLogin === login)) return 'admin';
   return null;
 }
 
-function getToken(){const c=getLocalCfg();return c?c.token:null;}
+// ═══════════════════════════════════════════════════════════════════
+//  GITHUB API HELPERS
+// ═══════════════════════════════════════════════════════════════════
 
-async function writeSiteConfig(gistId,token,owner,repo){
-  try{
-    let sha=null;
-    const get=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/site-config.json`,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
-    if(get.ok){const gd=await get.json();sha=gd.sha;}
-    const content=btoa(JSON.stringify({gistId}));
-    const body={message:'chore: update site config',content};
-    if(sha)body.sha=sha;
-    const put=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/site-config.json`,{method:'PUT',headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
-    return put.ok;
-  }catch(e){console.error('writeSiteConfig:',e);return false;}
+/** Returns auth headers using the in-memory token */
+function authHeaders() {
+  // NEVER log the token, never put it in a URL
+  return {
+    'Authorization': 'Bearer ' + _sessionToken,
+    'Accept': 'application/vnd.github.v3+json'
+  };
 }
 
-// ══════ GIST DB ══════
-let DB=null;
-
-async function fetchGist(){
-  const gistId=await getGistId();
-  if(!gistId)return null;
-  const token=getToken();
-  try{
-    const headers={'Accept':'application/vnd.github.v3+json'};
-    if(token)headers['Authorization']='token '+token;
-    const r=await fetch('https://api.github.com/gists/'+gistId,{headers});
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    const d=await r.json();
-    const raw=(d.files&&d.files['cr-data.json'])?d.files['cr-data.json'].content:'{}';
-    DB=JSON.parse(raw);
-    if(!DB.articles)DB.articles=[];
-    if(!DB.ads)DB.ads={left:[],right:[],bottom:[]};
-    if(!DB.admins)DB.admins=[];
-    setSyncStatus('ok','● Synced');
-    return DB;
-  }catch(e){setSyncStatus('err','● Sync Error');console.error(e);return null;}
+/**
+ * Identify the caller using GET /user.
+ * Returns { login, avatar_url } or throws on failure.
+ */
+async function githubWhoAmI() {
+  const r = await fetch('https://api.github.com/user', { headers: authHeaders() });
+  if (!r.ok) throw new Error('GitHub rejected the token (HTTP ' + r.status + '). Check it is valid and has gist scope.');
+  return r.json();
 }
 
-async function pushGist(data){
-  const gistId=await getGistId();
-  const token=getToken();
-  if(!gistId||!token){showToast('Need write token – use "New device? Enter token" on login.','error');return false;}
-  try{
-    const r=await fetch('https://api.github.com/gists/'+gistId,{method:'PATCH',headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify({files:{'cr-data.json':{content:JSON.stringify(data)}}})});
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    DB=data;setSyncStatus('ok','● Synced');return true;
-  }catch(e){setSyncStatus('err','● Sync Failed');console.error(e);return false;}
+/** Read a gist by ID. Returns parsed file content as string, or throws. */
+async function readGist(gistId, filename) {
+  const r = await fetch('https://api.github.com/gists/' + gistId, { headers: authHeaders() });
+  if (!r.ok) {
+    if (r.status === 404) throw new Error('Gist not found — check the Gist ID is correct and the token has access.');
+    throw new Error('Failed to read gist (HTTP ' + r.status + ')');
+  }
+  const d = await r.json();
+  if (!d.files || !d.files[filename]) throw new Error('File "' + filename + '" not found in gist.');
+  return d.files[filename].content;
 }
 
-function setSyncStatus(cls,text){const el=document.getElementById('syncStatus');if(!el)return;el.className='sync-status '+(cls||'');el.textContent=text;}
-async function syncFromGist(toast){
-  setSyncStatus('','● Syncing...');
-  const d=await fetchGist();
-  if(d){renderArticlesList();renderAllAdLists();renderAdminsList();if(toast)showToast('Refreshed!','success');}
-  else if(toast)showToast('Sync failed.','error');
+/** Write (PATCH) a gist file. Returns true on success. */
+async function writeGist(gistId, filename, content) {
+  const r = await fetch('https://api.github.com/gists/' + gistId, {
+    method: 'PATCH',
+    headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ files: { [filename]: { content } } })
+  });
+  if (!r.ok) throw new Error('Failed to write gist (HTTP ' + r.status + ')');
+  return true;
 }
 
-// ══════ SESSION ══════
-const SESS_KEY='cr_admin_sess_v2';
-let ME=null;
-function getSession(){try{return JSON.parse(sessionStorage.getItem(SESS_KEY)||'null');}catch{return null;}}
-function saveSession(u){sessionStorage.setItem(SESS_KEY,JSON.stringify(u));ME=u;}
-function clearSession(){sessionStorage.removeItem(SESS_KEY);ME=null;}
+/** Get public gist ID from site-config.json */
+let _publicGistId = null;
+async function getPublicGistId() {
+  if (_publicGistId) return _publicGistId;
+  try {
+    const r = await fetch('site-config.json?t=' + Date.now(), { cache: 'no-store' });
+    if (r.ok) { const d = await r.json(); if (d.gistId) { _publicGistId = d.gistId; return _publicGistId; } }
+  } catch(e) {}
+  return null;
+}
 
-// ══════ INIT ══════
-(async function init(){
+// ═══════════════════════════════════════════════════════════════════
+//  PUBLIC DB (cr-data.json) — articles, ads, analytics
+// ═══════════════════════════════════════════════════════════════════
+async function fetchPublicDB() {
+  const gistId = await getPublicGistId();
+  if (!gistId) throw new Error('Public gist ID not found in site-config.json');
+  const raw = await readGist(gistId, 'cr-data.json');
+  DB = JSON.parse(raw);
+  if (!DB.articles) DB.articles = [];
+  if (!DB.ads)      DB.ads = { left:[], right:[], bottom:[] };
+  setSyncStatus('ok', '● Synced');
+  return DB;
+}
+
+async function pushPublicDB(data) {
+  const gistId = await getPublicGistId();
+  if (!gistId) throw new Error('No public gist ID');
+  const pretty = JSON.stringify(data, null, 2);
+  await writeGist(gistId, 'cr-data.json', pretty);
+  DB = data;
+  setSyncStatus('ok', '● Synced');
+  return true;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  PRIVATE ACL (cr-admin.json) — roles only, no credentials
+// ═══════════════════════════════════════════════════════════════════
+async function fetchACL() {
+  const adminGistId = getAdminGistId();
+  if (!adminGistId) throw new Error('Admin Gist ID not in session.');
+  const raw = await readGist(adminGistId, 'cr-admin.json');
+  ACL = JSON.parse(raw);
+  if (!ACL.superAdmins) ACL.superAdmins = [];
+  if (!ACL.admins)      ACL.admins = [];
+  return ACL;
+}
+
+async function pushACL(aclData) {
+  const adminGistId = getAdminGistId();
+  if (!adminGistId) throw new Error('Admin Gist ID not in session.');
+  const pretty = JSON.stringify(aclData, null, 2);
+  await writeGist(adminGistId, 'cr-admin.json', pretty);
+  ACL = aclData;
+  return true;
+}
+
+async function syncFromGist(toast) {
+  setSyncStatus('', '● Syncing...');
+  try {
+    await fetchPublicDB();
+    renderArticlesList();
+    renderAllAdLists();
+    if (toast) showToast('Refreshed!', 'success');
+  } catch(e) {
+    setSyncStatus('err', '● Sync Error');
+    if (toast) showToast('Sync failed: ' + e.message, 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════════
+(async function init() {
+  // Loader overlay
   document.body.insertAdjacentHTML('afterbegin',
     '<div id="initLoader" style="position:fixed;inset:0;background:#0a0a0a;display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:1rem;">'
-    +'<div style="font-family:Orbitron,monospace;font-size:1.3rem;font-weight:900;color:#ff0000;letter-spacing:2px;">CR<span style=\'color:#f0f0f0\'>Earnings</span></div>'
-    +'<div style="width:18px;height:18px;border:2px solid #2a2a2a;border-top-color:#ff0000;border-radius:50%;animation:spin .7s linear infinite;"></div>'
-    +'</div>'
+    + '<div style="font-family:Orbitron,monospace;font-size:1.3rem;font-weight:900;color:#ff0000;letter-spacing:2px;">CR<span style=\'color:#f0f0f0\'>Earnings</span></div>'
+    + '<div style="width:18px;height:18px;border:2px solid #2a2a2a;border-top-color:#ff0000;border-radius:50%;animation:spin .7s linear infinite;"></div>'
+    + '</div>'
   );
+  function hideLoader() { const l = document.getElementById('initLoader'); if (l) l.remove(); }
 
-  function hideLoader(){const l=document.getElementById('initLoader');if(l)l.remove();}
-
-  try{
-    const gistId=await getGistId();
-
-    if(gistId){
-      const data=await fetchGist();
-      if(data&&data.admins&&data.admins.length>0){
-        const s=getSession();
-        if(s){ME=s;hideLoader();await showDashboard();return;}
-        hideLoader();showScreen('loginScreen');return;
-      }
-      hideLoader();showScreen('setupScreen');return;
+  try {
+    // Check for existing session this tab
+    const sess = getSession();
+    if (sess && getAdminGistId()) {
+      // We have a session cookie but token is gone (page reload).
+      // Force re-login — token is never persisted.
+      clearSession();
     }
-
-    hideLoader();showScreen('setupScreen');
-
-  }catch(e){
-    console.error('Init error:',e);
-    hideLoader();showScreen('setupScreen');
+    hideLoader();
+    showScreen('loginScreen');
+  } catch(e) {
+    hideLoader();
+    showScreen('loginScreen');
   }
 })();
 
-function showScreen(id){
-  ['setupScreen','loginScreen','adminDashboard'].forEach(s=>{
-    const el=document.getElementById(s);if(!el)return;
-    el.style.display=s===id?(s==='adminDashboard'?'block':'flex'):'none';
-  });
-}
+// ═══════════════════════════════════════════════════════════════════
+//  LOGIN — GitHub token identity verification
+// ═══════════════════════════════════════════════════════════════════
+async function doLogin() {
+  const token       = v('loginToken');
+  const adminGistId = v('loginAdminGistId');
+  const errEl       = document.getElementById('loginError');
+  errEl.style.display = 'none';
 
-function toggleTokenField(){
-  const w=document.getElementById('loginTokenWrap');
-  w.style.display=w.style.display==='none'?'block':'none';
-}
+  if (!token)       { errEl.textContent = 'Enter your GitHub PAT.'; errEl.style.display = 'block'; return; }
+  if (!adminGistId) { errEl.textContent = 'Enter the private Admin Gist ID.'; errEl.style.display = 'block'; return; }
 
-// ══════ SETUP ══════
-async function doSetup(){
-  const gistId=v('setupGistId'),token=v('setupGistToken');
-  const owner=v('setupRepoOwner'),repo=v('setupRepoName');
-  const username=v('setupUsername').toLowerCase(),pw=v('setupPassword'),pw2=v('setupPassword2');
-  const errEl=document.getElementById('setupError');errEl.style.display='none';
+  const btn = document.getElementById('loginBtn');
+  btn.innerHTML = 'Verifying with GitHub...<span class="spinner"></span>';
+  btn.disabled = true;
 
-  if(!gistId||!token||!owner||!repo||!username||!pw){err(errEl,'All fields are required.');return;}
-  if(pw!==pw2){err(errEl,'Passwords do not match.');return;}
+  try {
+    // Step 1: store token in memory ONLY
+    _sessionToken = token;
 
-  const btn=document.getElementById('setupBtn');btn.innerHTML='Setting up...<span class="spinner"></span>';btn.disabled=true;
+    // Step 2: verify identity via GitHub API
+    const user = await githubWhoAmI();
+    const githubLogin = user.login;
 
-  saveLocalCfg({gistId,token,repoOwner:owner,repoName:repo});
-  _cachedGistId=gistId;
+    // Step 3: store admin gist ID in sessionStorage
+    setAdminGistId(adminGistId);
 
-  const existing=await fetchGist();
-  if(!existing){
-    saveLocalCfg(null);_cachedGistId=null;
-    err(errEl,'Cannot connect to Gist. Check Gist ID and Token.');
-    btn.textContent='Complete Setup';btn.disabled=false;return;
-  }
+    // Step 4: load the private ACL
+    await fetchACL();
 
-  if(existing.admins&&existing.admins.length>0){
-    err(errEl,'This Gist already has admins. Use Login instead.');
-    btn.textContent='Complete Setup';btn.disabled=false;return;
-  }
-
-  const superAdmin={id:genId(),username,passwordHash:hashPassword(username,pw),isSuperAdmin:true,createdAt:new Date().toISOString()};
-  const initData={articles:[],ads:{left:[],right:[],bottom:[]},admins:[superAdmin]};
-  const ok=await pushGist(initData);
-  if(!ok){err(errEl,'Cannot write to Gist. Check token has gist scope.');btn.textContent='Complete Setup';btn.disabled=false;return;}
-
-  btn.innerHTML='Writing config...<span class="spinner"></span>';
-  const cfgOk=await writeSiteConfig(gistId,token,owner,repo);
-  if(!cfgOk){
-    err(errEl,'✅ Gist set up! But could not write site-config.json to repo – make sure token has "repo" scope and repo name/owner are correct. Fix this for the site to work for all visitors.');
-    btn.textContent='Complete Setup';btn.disabled=false;return;
-  }
-
-  showToast('Setup complete! Logging in...','success');
-  saveSession({id:superAdmin.id,username:superAdmin.username,isSuperAdmin:true});
-  setTimeout(()=>location.reload(),1500);
-}
-
-// ══════ LOGIN ══════
-async function doLogin(){
-  const username=v('loginUsername').toLowerCase(),password=v('loginPassword');
-  const errEl=document.getElementById('loginError');errEl.style.display='none';
-  if(!username||!password){err(errEl,'Enter username and password.');return;}
-
-  const btn=document.getElementById('loginBtn');btn.innerHTML='Checking...<span class="spinner"></span>';btn.disabled=true;
-
-  const enteredToken=(document.getElementById('loginToken').value||'').trim();
-  // Always try to save token if entered; also get gistId from site-config.json if not in localStorage
-  if(enteredToken){
-    const gId=await getGistId();
-    if(gId){const ex=getLocalCfg()||{};saveLocalCfg(Object.assign({},ex,{gistId:gId,token:enteredToken}));}
-    else{
-      // gistId not found anywhere yet – store token temporarily; it will merge after fetchGist resolves gistId
-      const existing=getLocalCfg();
-      saveLocalCfg(Object.assign({},existing,{token:enteredToken}));
+    // Step 5: check authorization
+    const role = getRole(githubLogin);
+    if (!role) {
+      // Not authorized — clear everything immediately
+      _sessionToken = null;
+      sessionStorage.removeItem(SESS_ADMIN_GIST);
+      ACL = null;
+      throw new Error('Your GitHub account (@' + githubLogin + ') is not in the admin list. Contact the site owner.');
     }
+
+    // Step 6: load public DB
+    await fetchPublicDB();
+
+    // Step 7: save session (no token — just identity)
+    ME = { githubLogin, role, avatarUrl: user.avatar_url };
+    saveSession(ME);
+
+    // Step 8: show dashboard
+    await showDashboard();
+
+  } catch(e) {
+    _sessionToken = null;
+    ACL = null;
+    errEl.textContent = e.message || 'Login failed.';
+    errEl.style.display = 'block';
+  } finally {
+    btn.textContent = 'Login with GitHub Token';
+    btn.disabled = false;
   }
-
-  const data=await fetchGist();
-  if(!data){err(errEl,'Cannot reach database. Check internet.');btn.textContent='Login';btn.disabled=false;return;}
-
-  const ph=hashPassword(username,password);
-  const admin=data.admins.find(a=>a.username===username&&a.passwordHash===ph);
-  if(!admin){err(errEl,'Invalid username or password.');document.getElementById('loginPassword').value='';btn.textContent='Login';btn.disabled=false;return;}
-
-  saveSession({id:admin.id,username:admin.username,isSuperAdmin:!!admin.isSuperAdmin});
-  // Show token badge
-  const tSaved=document.getElementById('tokenSavedBadge');
-  const tReq=document.getElementById('tokenRequiredBadge');
-  if(tSaved)tSaved.style.display=getToken()?'':'none';
-  await showDashboard();
-  btn.textContent='Login';btn.disabled=false;
 }
-document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-document.getElementById('loginUsername').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 
-// Show token status badge on page load
-(function checkTokenBadge(){
-  const saved=getToken();
-  const savedBadge=document.getElementById('tokenSavedBadge');
-  const reqBadge=document.getElementById('tokenRequiredBadge');
-  if(saved&&savedBadge)savedBadge.style.display='';
-})();
-function doLogout(){clearSession();location.reload();}
-
-function saveRepoSettings(){
-  const owner=(document.getElementById('repoOwnerInput').value||'').trim();
-  const repo=(document.getElementById('repoNameInput').value||'').trim();
-  const status=document.getElementById('repoSettingsStatus');
-  if(!owner||!repo){status.textContent='⚠ Enter both fields';status.style.color='#ff9900';return;}
-  const existing=getLocalCfg()||{};
-  saveLocalCfg(Object.assign({},existing,{repoOwner:owner,repoName:repo}));
-  status.textContent='✔ Saved!';status.style.color='#00cc44';
-  setTimeout(()=>status.textContent='',3000);
-}
-async function saveAnalyticsToken(){
-  const btn=event.target;btn.textContent='Saving...';btn.disabled=true;
-  const t=(document.getElementById('analyticsTokenInput').value||'').trim();
-  const status=document.getElementById('analyticsTokenStatus');
-  if(!t){
-    status.textContent='Enter a token first';status.style.color='#ff4444';
-    btn.textContent='Save Analytics Token';btn.disabled=false;return;
+document.addEventListener('keydown', function(e) {
+  if (document.getElementById('loginScreen').style.display !== 'none') {
+    if (e.key === 'Enter') doLogin();
   }
-  // Validate the token works by trying a gist read
-  try{
-    const gistId=await getGistId();
-    if(!gistId){status.textContent='No Gist ID found';status.style.color='#ff4444';btn.textContent='Save Analytics Token';btn.disabled=false;return;}
-    const test=await fetch('https://api.github.com/gists/'+gistId,{headers:{'Authorization':'token '+t,'Accept':'application/vnd.github.v3+json'}});
-    if(!test.ok){status.textContent='Token invalid or no Gist access';status.style.color='#ff4444';btn.textContent='Save Analytics Token';btn.disabled=false;return;}
-    // Save to site-config.json via repo API
-    const adminToken=getToken();
-    const cfg=getLocalCfg();
-    if(!adminToken||!cfg||!cfg.repoOwner||!cfg.repoName){
-      // No repo configured — save locally only with note
-      localStorage.setItem('cr_analytics_token',t);
-      status.textContent="⚠ Saved locally only (no repo configured). Visitors cannot be tracked until you deploy site-config.json.";
-      status.style.color='#ff9900';btn.textContent='Save Analytics Token';btn.disabled=false;return;
-    }
-    // Read current site-config.json — must get fresh SHA or GitHub returns 409
-    const repoOwner=cfg.repoOwner,repoName=cfg.repoName;
-    let sha=null;
-    let currentConfig={gistId};
-    const apiUrl='https://api.github.com/repos/'+repoOwner+'/'+repoName+'/contents/site-config.json';
-    // Use cache-busting and no-cache headers to always get fresh SHA
-    const get=await fetch(apiUrl+'?t='+Date.now(),{cache:'no-store',headers:{'Authorization':'token '+adminToken,'Accept':'application/vnd.github.v3+json','Cache-Control':'no-cache'}});
-    if(get.ok){
-      const gd=await get.json();
-      sha=gd.sha;
-      try{currentConfig=JSON.parse(atob(gd.content.replace(/\n/g,'')));}catch(e){}
-    } else if(get.status===409){
-      // 409 on GET means repo is empty — file doesn't exist yet, proceed without SHA
-      sha=null;
-    } else if(!get.ok){
-      status.textContent='Could not read site-config.json ('+get.status+') — check repo owner/name';
-      status.style.color='#ff4444';btn.textContent='Save Analytics Token';btn.disabled=false;return;
-    }
-    currentConfig.analyticsToken=t;
-    const content=btoa(unescape(encodeURIComponent(JSON.stringify(currentConfig,null,2))));
-    const body={message:'chore: add analytics token',content};
-    if(sha)body.sha=sha;
-    const put=await fetch('https://api.github.com/repos/'+repoOwner+'/'+repoName+'/contents/site-config.json',{method:'PUT',headers:{'Authorization':'token '+adminToken,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(put.ok){
-      status.textContent='✔ Saved to site-config.json — all visitors will now be tracked!';
-      status.style.color='#00cc44';
-      document.getElementById('analyticsTokenInput').value='';
-    } else {
-      const errBody=await put.json().catch(()=>({}));
-      status.textContent='Failed ('+put.status+'): '+(errBody.message||'check admin token permissions');
-      status.style.color='#ff4444';
-    }
-  }catch(e){
-    status.textContent='Error: '+e.message;status.style.color='#ff4444';
-  }
-  btn.textContent='Save Analytics Token';btn.disabled=false;
-}
+});
 
-async function clearAnalyticsToken(){
-  const status=document.getElementById('analyticsTokenStatus');
-  const adminToken=getToken();
-  const cfg=getLocalCfg();
-  if(!adminToken||!cfg||!cfg.repoOwner||!cfg.repoName){
-    localStorage.removeItem('cr_analytics_token');
-    status.textContent='Cleared locally';status.style.color='#888';return;
-  }
-  try{
-    const repoOwner=cfg.repoOwner,repoName=cfg.repoName;
-    const get=await fetch('https://api.github.com/repos/'+repoOwner+'/'+repoName+'/contents/site-config.json',{headers:{'Authorization':'token '+adminToken,'Accept':'application/vnd.github.v3+json'}});
-    if(!get.ok){status.textContent='Could not read site-config.json';status.style.color='#ff4444';return;}
-    const gd=await get.json();
-    let currentConfig={};
-    try{currentConfig=JSON.parse(atob(gd.content.replace(/\n/g,'')));}catch(e){}
-    delete currentConfig.analyticsToken;
-    const content=btoa(unescape(encodeURIComponent(JSON.stringify(currentConfig,null,2))));
-    await fetch('https://api.github.com/repos/'+repoOwner+'/'+repoName+'/contents/site-config.json',{method:'PUT',headers:{'Authorization':'token '+adminToken,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify({message:'chore: remove analytics token',content,sha:gd.sha})});
-    status.textContent='Analytics token removed';status.style.color='#888';
-  }catch(e){status.textContent='Error: '+e.message;status.style.color='#ff4444';}
-}
+function doLogout() { clearSession(); location.reload(); }
 
-async function saveInlineToken(){
-  const t=(document.getElementById('inlineToken').value||'').trim();
-  if(!t){showToast('Enter your GitHub token first.','error');return;}
-  const gId=await getGistId();
-  if(!gId){showToast('Cannot find Gist ID.','error');return;}
-  saveLocalCfg({gistId:gId,token:t});
-  const banner=document.getElementById('tokenBanner');
-  if(banner)banner.remove();
-  setSyncStatus('ok','● Synced');
-  showToast('Token saved! You can now write data.','success');
-}
-
-// ══════ DASHBOARD ══════
-async function showDashboard(){
+// ═══════════════════════════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════════════════════════
+async function showDashboard() {
   showScreen('adminDashboard');
-  document.getElementById('loggedAsLabel').textContent='👤 '+ME.username+(ME.isSuperAdmin?' (Super Admin)':'');
-  document.getElementById('newUsername').value=ME.username;
-  if(!ME.isSuperAdmin)document.getElementById('tab-admins').style.display='none';
-  if(!getToken()){
-    setSyncStatus('err','⚠ No write token');
-    // Show inline token entry banner
-    if(!document.getElementById('tokenBanner')){
-      const banner=document.createElement('div');
-      banner.id='tokenBanner';
-      banner.style.cssText='background:rgba(255,0,0,.08);border-bottom:1px solid var(--cr-red);padding:.6rem 1.5rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;font-size:.8rem;';
-      banner.innerHTML=`<span style="color:#ff4444;font-weight:700;">⚠ No GitHub token found.</span>
-        <span style="color:var(--cr-muted);">You cannot save until you enter your token.</span>
-        <input type="password" id="inlineToken" placeholder="ghp_xxxxxxxxxxxx" style="background:#1a1a1a;border:1px solid var(--cr-border);color:var(--cr-text);border-radius:6px;padding:5px 10px;font-size:.8rem;flex:1;min-width:200px;max-width:300px;font-family:'Exo 2',sans-serif;" />
-        <button onclick="saveInlineToken()" style="background:var(--cr-red);color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:700;font-family:'Exo 2',sans-serif;">Save Token</button>`;
-      const header=document.querySelector('#adminDashboard>header');
-      if(header)header.insertAdjacentElement('afterend',banner);
-    }
-  }
-  await syncFromGist(false);
 
-  // Load analytics token status
-  (async function(){
-    try{
-      const r=await fetch('site-config.json?t='+Date.now(),{cache:'no-store'});
-      if(r.ok){
-        const d=await r.json();
-        const status=document.getElementById('analyticsTokenStatus');
-        if(status){
-          if(d.analyticsToken){status.textContent='✔ Token active — all visitors tracked';status.style.color='#00cc44';}
-          else{status.textContent='Not set — only admin visits tracked';status.style.color='#ff9900';}
-        }
+  const roleLabel = { owner: '👑 Owner', superAdmin: '⭐ Super Admin', admin: '👤 Admin' }[ME.role] || ME.role;
+  document.getElementById('loggedAsLabel').textContent = '@' + ME.githubLogin + ' · ' + roleLabel;
+
+  // Tab visibility by role
+  // Admins cannot see the Admins tab at all
+  if (ME.role === 'admin') {
+    document.getElementById('tab-admins').style.display = 'none';
+  }
+
+  // Load settings fields
+  const cfg = getLocalRepoCfg();
+  if (cfg && cfg.repoOwner) document.getElementById('repoOwnerInput').value = cfg.repoOwner;
+  if (cfg && cfg.repoName)  document.getElementById('repoNameInput').value  = cfg.repoName;
+  document.getElementById('shortcutDisplay').value = formatShortcut(localStorage.getItem('cr_admin_shortcut') || 'ctrl+alt+a');
+
+  // Session info display
+  document.getElementById('sessionInfo').innerHTML =
+    '<div>GitHub Login: <strong style="color:var(--cr-text);">@' + esc(ME.githubLogin) + '</strong></div>' +
+    '<div>Role: <strong style="color:var(--cr-red);">' + roleLabel + '</strong></div>' +
+    '<div style="color:var(--cr-muted);font-size:.75rem;margin-top:6px;">Token: stored in memory only · clears on tab close</div>';
+
+  renderArticlesList();
+  renderAllAdLists();
+
+  // Analytics token status
+  try {
+    const r = await fetch('site-config.json?t=' + Date.now(), { cache: 'no-store' });
+    if (r.ok) {
+      const d = await r.json();
+      const el = document.getElementById('analyticsTokenStatus');
+      if (el) {
+        if (d.analyticsToken) { el.textContent = '✔ Active'; el.style.color = '#00cc44'; }
+        else { el.textContent = 'Not set'; el.style.color = '#ff9900'; }
       }
-    }catch(e){}
-  })();
-
-  // Load saved shortcut
-  const savedShortcut = localStorage.getItem('cr_admin_shortcut') || 'ctrl+alt+a';
-  document.getElementById('shortcutDisplay').value = formatShortcut(savedShortcut);
+    }
+  } catch(e) {}
 }
 
-// ══════ TABS ══════
-function switchTab(tab){
-  ['articles','ads','admins','stats','settings'].forEach(t=>{
-    const p=document.getElementById('tab'+t[0].toUpperCase()+t.slice(1));if(p)p.style.display=t===tab?'block':'none';
-    const b=document.getElementById('tab-'+t);if(b)b.classList.toggle('active',t===tab);
+// ═══════════════════════════════════════════════════════════════════
+//  TABS
+// ═══════════════════════════════════════════════════════════════════
+function switchTab(tab) {
+  ['articles','ads','admins','stats','settings'].forEach(t => {
+    const p = document.getElementById('tab' + t[0].toUpperCase() + t.slice(1)); if (p) p.style.display = t === tab ? 'block' : 'none';
+    const b = document.getElementById('tab-' + t); if (b) b.classList.toggle('active', t === tab);
   });
-  if(tab==='ads')renderAllAdLists();
-  if(tab==='admins')renderAdminsList();
-  if(tab==='stats')renderStats();
-  if(tab==='settings'){
-    const cfg=getLocalCfg();
-    if(cfg&&cfg.repoOwner)document.getElementById('repoOwnerInput').value=cfg.repoOwner;
-    if(cfg&&cfg.repoName)document.getElementById('repoNameInput').value=cfg.repoName;
-  }
+  if (tab === 'ads')      renderAllAdLists();
+  if (tab === 'admins')   renderAdminsList();
+  if (tab === 'stats')    renderStats();
 }
 
-// ══════ ARTICLES ══════
-function getArticles(){return DB&&DB.articles?DB.articles:[];}
-function renderArticlesList(){
-  const all=getArticles().sort((a,b)=>new Date(b.date)-new Date(a.date));
-  const el=document.getElementById('articlesList');
-  if(!all.length){el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--cr-muted);">No airdrops yet.</div>';return;}
-  const now=new Date();
-  el.innerHTML=all.map(a=>{
-    let status=a.status||(a.published===false?'draft':'published');
-    let bc='badge-published',bt='Published';
-    if(status==='draft'){bc='badge-draft';bt='Draft';}
-    else if(status==='scheduled'&&a.scheduledAt&&new Date(a.scheduledAt)>now){bc='badge-scheduled';bt='Scheduled: '+fmtDate(a.scheduledAt);}
-    return`<div class="article-row">
-      ${a.image?`<img src="${esc(a.image)}" onerror="this.style.display='none'"/>`:`<div class="thumb-placeholder">🪂</div>`}
+// ═══════════════════════════════════════════════════════════════════
+//  ARTICLES  (accessible to all roles)
+// ═══════════════════════════════════════════════════════════════════
+function getArticles() { return DB && DB.articles ? DB.articles : []; }
+
+function renderArticlesList() {
+  const all = getArticles().sort((a,b) => new Date(b.date) - new Date(a.date));
+  const el = document.getElementById('articlesList');
+  if (!all.length) { el.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--cr-muted);">No airdrops yet.</div>'; return; }
+  const now = new Date();
+  el.innerHTML = all.map(a => {
+    let status = a.status || (a.published === false ? 'draft' : 'published');
+    let bc = 'badge-published', bt = 'Published';
+    if (status === 'draft') { bc = 'badge-draft'; bt = 'Draft'; }
+    else if (status === 'scheduled' && a.scheduledAt && new Date(a.scheduledAt) > now) { bc = 'badge-scheduled'; bt = 'Scheduled: ' + fmtDate(a.scheduledAt); }
+    return `<div class="article-row">
+      ${a.image ? `<img src="${esc(a.image)}" onerror="this.style.display='none'"/>` : `<div class="thumb-placeholder">🪂</div>`}
       <div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(a.title)}</div><div style="font-size:.72rem;color:var(--cr-muted);">${fmtDate(a.date)} · by ${esc(a.addedBy||'admin')}</div></div>
       <span class="badge ${bc}">${bt}</span>
       <div style="display:flex;gap:6px;">
@@ -778,16 +745,11 @@ function renderArticlesList(){
   }).join('');
 }
 
-// Referral Links handling
-function addRefLinkField(name = '', url = '') {
+function addRefLinkField(name='', url='') {
   const container = document.getElementById('refLinksContainer');
   const div = document.createElement('div');
   div.className = 'ref-row';
-  div.innerHTML = `
-    <input type="text" placeholder="Name (e.g. Binance)" value="${esc(name)}" class="ref-name">
-    <input type="url" placeholder="URL" value="${esc(url)}" class="ref-url">
-    <button onclick="this.parentElement.remove()">✕</button>
-  `;
+  div.innerHTML = `<input type="text" placeholder="Name (e.g. Binance)" value="${esc(name)}" class="ref-name"><input type="url" placeholder="URL" value="${esc(url)}" class="ref-url"><button onclick="this.parentElement.remove()">✕</button>`;
   container.appendChild(div);
 }
 
@@ -796,429 +758,427 @@ function collectRefLinks() {
   const refs = [];
   rows.forEach(row => {
     const name = row.querySelector('.ref-name').value.trim();
-    const url = row.querySelector('.ref-url').value.trim();
+    const url  = row.querySelector('.ref-url').value.trim();
     if (name && url) refs.push({ name, url });
   });
   return refs;
 }
 
-function openArticleForm(){
-  document.getElementById('editId').value='';
-  ['artTitle','artImage','artYt'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('artDesc').value='';
-  document.getElementById('artStatus').value='published';
-  document.getElementById('scheduleField').style.display='none';
-  document.getElementById('articleFormTitle').textContent='Add New Airdrop';
-  // Clear ref links
+function openArticleForm() {
+  document.getElementById('editId').value = '';
+  ['artTitle','artImage','artYt'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('artDesc').value = '';
+  document.getElementById('artStatus').value = 'published';
+  document.getElementById('scheduleField').style.display = 'none';
+  document.getElementById('articleFormTitle').textContent = 'Add New Airdrop';
   document.getElementById('refLinksContainer').innerHTML = '';
   openModal('articleModal');
 }
 
-function editArticle(id){
-  const a=getArticles().find(x=>x.id===id);if(!a)return;
-  document.getElementById('editId').value=id;
-  document.getElementById('artTitle').value=a.title||'';
-  document.getElementById('artDesc').value=a.description||'';
-  document.getElementById('artImage').value=a.image||'';
-  document.getElementById('artYt').value=a.ytVideoId||'';
-  const status=a.status||(a.published===false?'draft':'published');
-  document.getElementById('artStatus').value=status;
-  document.getElementById('scheduleField').style.display=status==='scheduled'?'block':'none';
-  if(a.scheduledAt){const d=new Date(a.scheduledAt);document.getElementById('artSchedule').value=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);}
-  document.getElementById('articleFormTitle').textContent='Edit Airdrop';
-
-  // Populate ref links
+function editArticle(id) {
+  const a = getArticles().find(x => x.id === id); if (!a) return;
+  document.getElementById('editId').value      = id;
+  document.getElementById('artTitle').value    = a.title || '';
+  document.getElementById('artDesc').value     = a.description || '';
+  document.getElementById('artImage').value    = a.image || '';
+  document.getElementById('artYt').value       = a.ytVideoId || '';
+  const status = a.status || (a.published === false ? 'draft' : 'published');
+  document.getElementById('artStatus').value   = status;
+  document.getElementById('scheduleField').style.display = status === 'scheduled' ? 'block' : 'none';
+  if (a.scheduledAt) { const d = new Date(a.scheduledAt); document.getElementById('artSchedule').value = new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,16); }
+  document.getElementById('articleFormTitle').textContent = 'Edit Airdrop';
   const container = document.getElementById('refLinksContainer');
   container.innerHTML = '';
-  if (a.refLinks && Array.isArray(a.refLinks)) {
-    a.refLinks.forEach(r => addRefLinkField(r.name, r.url));
-  }
-
+  if (a.refLinks && Array.isArray(a.refLinks)) a.refLinks.forEach(r => addRefLinkField(r.name, r.url));
   openModal('articleModal');
 }
 
-async function saveArticle(){
-  const title=v('artTitle'),desc=v('artDesc');
-  if(!title||!desc){showToast('Title and description required!','error');return;}
-  const status=document.getElementById('artStatus').value;
-  let scheduledAt=null;
-  if(status==='scheduled'){const sv=v('artSchedule');if(!sv){showToast('Pick a schedule time.','error');return;}scheduledAt=new Date(sv).toISOString();}
-  const btn=document.getElementById('saveArticleBtn');btn.innerHTML='Saving...<span class="spinner"></span>';btn.disabled=true;
-  const id=v('editId')||genId();
-  const all=getArticles();
-  const idx=all.findIndex(a=>a.id===id);
-  const article={
-    id,
-    title,
-    description:desc,
-    image:v('artImage'),
-    ytVideoId:v('artYt'),
+async function saveArticle() {
+  const title = v('artTitle'), desc = v('artDesc');
+  if (!title || !desc) { showToast('Title and description required!', 'error'); return; }
+  const status = document.getElementById('artStatus').value;
+  let scheduledAt = null;
+  if (status === 'scheduled') { const sv = v('artSchedule'); if (!sv) { showToast('Pick a schedule time.', 'error'); return; } scheduledAt = new Date(sv).toISOString(); }
+  const btn = document.getElementById('saveArticleBtn');
+  btn.innerHTML = 'Saving...<span class="spinner"></span>'; btn.disabled = true;
+  const id  = v('editId') || genId();
+  const all = getArticles();
+  const idx = all.findIndex(a => a.id === id);
+  const article = {
+    id, title, description: desc,
+    image: v('artImage'), ytVideoId: v('artYt'),
     refLinks: collectRefLinks(),
-    status,
-    scheduledAt,
-    published:status==='published',
-    addedBy:ME.username,
-    date:idx>=0?all[idx].date:new Date().toISOString()
+    status, scheduledAt,
+    published: status === 'published',
+    addedBy: ME.githubLogin,
+    date: idx >= 0 ? all[idx].date : new Date().toISOString()
   };
-  if(idx>=0)all[idx]=article;else all.push(article);
-  const ok=await pushGist({...DB,articles:all});
-  btn.textContent='Save Airdrop';btn.disabled=false;
-  if(ok){closeModal('articleModal');renderArticlesList();showToast(idx>=0?'Updated!':'Published!','success');}
-  else showToast('Failed. Check you have write token.','error');
+  if (idx >= 0) all[idx] = article; else all.push(article);
+  try {
+    await pushPublicDB({ ...DB, articles: all });
+    closeModal('articleModal');
+    renderArticlesList();
+    showToast(idx >= 0 ? 'Updated!' : 'Published!', 'success');
+  } catch(e) {
+    showToast('Save failed: ' + e.message, 'error');
+  }
+  btn.textContent = 'Save Airdrop'; btn.disabled = false;
 }
 
-async function deleteArticle(id){
-  if(!confirm('Delete this airdrop?'))return;
-  const ok=await pushGist({...DB,articles:getArticles().filter(a=>a.id!==id)});
-  if(ok){renderArticlesList();showToast('Deleted.','success');}else showToast('Delete failed.','error');
+async function deleteArticle(id) {
+  if (!confirm('Delete this airdrop?')) return;
+  try {
+    await pushPublicDB({ ...DB, articles: getArticles().filter(a => a.id !== id) });
+    renderArticlesList();
+    showToast('Deleted.', 'success');
+  } catch(e) { showToast('Delete failed: ' + e.message, 'error'); }
 }
 
-// ══════ ADS ══════
-function getAds(){return DB&&DB.ads?DB.ads:{left:[],right:[],bottom:[]};}
-function renderAllAdLists(){const ads=getAds();renderAdList('adLeftList',ads.left||[],'left');renderAdList('adRightList',ads.right||[],'right');renderAdList('adBottomList',ads.bottom||[],'bottom');}
-function renderAdList(elId,list,zone){
-  const el=document.getElementById(elId);
-  if(!list.length){el.innerHTML='<div style="color:var(--cr-muted);font-size:.8rem;padding:8px;">No ads yet.</div>';return;}
-  el.innerHTML=list.map((ad,i)=>`<div class="ad-row">${ad.image?`<img src="${esc(ad.image)}" style="width:40px;height:40px;object-fit:cover;border-radius:5px;"/>`:'<div style="width:40px;height:40px;background:#1a0000;border-radius:5px;"></div>'}<div style="flex:1;min-width:0;"><div style="font-size:.85rem;font-weight:600;">${esc(ad.title||'(no title)')}</div><div style="font-size:.7rem;color:var(--cr-muted);">${esc(ad.link||'')}</div></div><button class="btn-ghost" style="padding:4px 10px;font-size:.72rem;" onclick="editAd('${zone}',${i})">Edit</button><button class="btn-ghost" style="padding:4px 10px;font-size:.72rem;color:#ff4444;border-color:#ff4444;" onclick="deleteAd('${zone}',${i})">Del</button></div>`).join('');
+// ═══════════════════════════════════════════════════════════════════
+//  ADS  (accessible to all roles)
+// ═══════════════════════════════════════════════════════════════════
+function getAds() { return DB && DB.ads ? DB.ads : { left:[], right:[], bottom:[] }; }
+
+function renderAllAdLists() {
+  const ads = getAds();
+  renderAdList('adLeftList', ads.left||[], 'left');
+  renderAdList('adRightList', ads.right||[], 'right');
+  renderAdList('adBottomList', ads.bottom||[], 'bottom');
 }
-function openAdForm(zone){document.getElementById('adZone').value=zone;document.getElementById('editAdId').value='';['adTitle','adSubtitle','adImage','adLink'].forEach(id=>document.getElementById(id).value='');document.getElementById('adFormTitle').textContent='Add '+zone[0].toUpperCase()+zone.slice(1)+' Ad';openModal('adModal');}
-function editAd(zone,idx){const ad=(getAds()[zone]||[])[idx];if(!ad)return;document.getElementById('adZone').value=zone;document.getElementById('editAdId').value=idx;document.getElementById('adTitle').value=ad.title||'';document.getElementById('adSubtitle').value=ad.subtitle||'';document.getElementById('adImage').value=ad.image||'';document.getElementById('adLink').value=ad.link||'';document.getElementById('adFormTitle').textContent='Edit '+zone[0].toUpperCase()+zone.slice(1)+' Ad';openModal('adModal');}
-async function saveAd(){
-  const zone=v('adZone'),editIdx=v('editAdId');
-  const ad={title:v('adTitle'),subtitle:v('adSubtitle'),image:v('adImage'),link:v('adLink')};
-  const btn=document.getElementById('saveAdBtn');btn.innerHTML='Saving...<span class="spinner"></span>';btn.disabled=true;
+
+function renderAdList(elId, list, zone) {
+  const el = document.getElementById(elId);
+  if (!list.length) { el.innerHTML = '<div style="color:var(--cr-muted);font-size:.8rem;padding:8px;">No ads yet.</div>'; return; }
+  el.innerHTML = list.map((ad,i) =>
+    `<div class="ad-row">${ad.image ? `<img src="${esc(ad.image)}" style="width:40px;height:40px;object-fit:cover;border-radius:5px;"/>` : '<div style="width:40px;height:40px;background:#1a0000;border-radius:5px;"></div>'}<div style="flex:1;min-width:0;"><div style="font-size:.85rem;font-weight:600;">${esc(ad.title||'(no title)')}</div><div style="font-size:.7rem;color:var(--cr-muted);">${esc(ad.link||'')}</div></div><button class="btn-ghost" style="padding:4px 10px;font-size:.72rem;" onclick="editAd('${zone}',${i})">Edit</button><button class="btn-ghost" style="padding:4px 10px;font-size:.72rem;color:#ff4444;border-color:#ff4444;" onclick="deleteAd('${zone}',${i})">Del</button></div>`
+  ).join('');
+}
+
+function openAdForm(zone) { document.getElementById('adZone').value=zone; document.getElementById('editAdId').value=''; ['adTitle','adSubtitle','adImage','adLink'].forEach(id=>document.getElementById(id).value=''); document.getElementById('adFormTitle').textContent='Add '+zone[0].toUpperCase()+zone.slice(1)+' Ad'; openModal('adModal'); }
+function editAd(zone,idx) { const ad=(getAds()[zone]||[])[idx]; if(!ad)return; document.getElementById('adZone').value=zone; document.getElementById('editAdId').value=idx; document.getElementById('adTitle').value=ad.title||''; document.getElementById('adSubtitle').value=ad.subtitle||''; document.getElementById('adImage').value=ad.image||''; document.getElementById('adLink').value=ad.link||''; document.getElementById('adFormTitle').textContent='Edit '+zone[0].toUpperCase()+zone.slice(1)+' Ad'; openModal('adModal'); }
+
+async function saveAd() {
+  const zone=v('adZone'), editIdx=v('editAdId');
+  const ad={ title:v('adTitle'), subtitle:v('adSubtitle'), image:v('adImage'), link:v('adLink') };
+  const btn=document.getElementById('saveAdBtn'); btn.innerHTML='Saving...<span class="spinner"></span>'; btn.disabled=true;
   const ads=JSON.parse(JSON.stringify(getAds()));
   if(!ads[zone])ads[zone]=[];
-  if(editIdx!=='')ads[zone][parseInt(editIdx)]=ad;else ads[zone].push(ad);
-  const ok=await pushGist({...DB,ads});
-  btn.textContent='Save Ad';btn.disabled=false;
-  if(ok){closeModal('adModal');renderAllAdLists();showToast('Ad saved!','success');}else showToast('Failed.','error');
+  if(editIdx!=='')ads[zone][parseInt(editIdx)]=ad; else ads[zone].push(ad);
+  try { await pushPublicDB({...DB,ads}); closeModal('adModal'); renderAllAdLists(); showToast('Ad saved!','success'); }
+  catch(e) { showToast('Failed: '+e.message,'error'); }
+  btn.textContent='Save Ad'; btn.disabled=false;
 }
-async function deleteAd(zone,idx){
+
+async function deleteAd(zone,idx) {
   if(!confirm('Delete?'))return;
-  const ads=JSON.parse(JSON.stringify(getAds()));ads[zone].splice(idx,1);
-  const ok=await pushGist({...DB,ads});
-  if(ok){renderAllAdLists();showToast('Removed.','success');}else showToast('Failed.','error');
+  const ads=JSON.parse(JSON.stringify(getAds())); ads[zone].splice(idx,1);
+  try { await pushPublicDB({...DB,ads}); renderAllAdLists(); showToast('Removed.','success'); }
+  catch(e) { showToast('Failed: '+e.message,'error'); }
 }
 
-// ══════ ADMINS ══════
-function getAdmins(){return DB&&DB.admins?DB.admins:[];}
-function renderAdminsList(){
-  if(!ME.isSuperAdmin){document.getElementById('adminManagePanel').style.display='none';document.getElementById('superadminOnlyMsg').style.display='block';return;}
-  document.getElementById('adminManagePanel').style.display='block';document.getElementById('superadminOnlyMsg').style.display='none';
-  document.getElementById('adminsList').innerHTML=getAdmins().map(a=>`<div class="admin-row"><div style="font-size:1.5rem;">👤</div><div style="flex:1;"><div style="font-weight:700;font-size:.9rem;">${esc(a.username)}</div><div style="font-size:.72rem;color:var(--cr-muted);">Added: ${fmtDate(a.createdAt)}</div></div>${a.isSuperAdmin?'<span class="superadmin-badge">Super Admin</span>':'<span class="badge" style="background:rgba(255,255,255,.05);border:1px solid var(--cr-border);color:var(--cr-muted);">Admin</span>'}<div style="display:flex;gap:6px;"><button class="btn-ghost" style="padding:5px 12px;font-size:.75rem;" onclick="editAdminModal('${a.id}')">Edit</button>${!a.isSuperAdmin?`<button class="btn-ghost" style="padding:5px 12px;font-size:.75rem;color:#ff4444;border-color:#ff4444;" onclick="deleteAdmin('${a.id}')">Remove</button>`:''}</div></div>`).join('');
-}
-function openAdminForm(){document.getElementById('editAdminId').value='';document.getElementById('adminUsername').value='';document.getElementById('adminPassword').value='';document.getElementById('adminPwNote').style.display='none';document.getElementById('adminFormTitle').textContent='Add Admin';openModal('adminModal');}
-function editAdminModal(id){const a=getAdmins().find(x=>x.id===id);if(!a)return;document.getElementById('editAdminId').value=id;document.getElementById('adminUsername').value=a.username;document.getElementById('adminPassword').value='';document.getElementById('adminPwNote').style.display='inline';document.getElementById('adminFormTitle').textContent='Edit Admin';openModal('adminModal');}
-async function saveAdmin(){
-  const editId=v('editAdminId'),username=v('adminUsername').toLowerCase(),pw=v('adminPassword');
-  if(!username){showToast('Username required.','error');return;}
-  if(!editId&&!pw){showToast('Password required for new admin.','error');return;}
-  const btn=document.getElementById('saveAdminBtn');btn.innerHTML='Saving...<span class="spinner"></span>';btn.disabled=true;
-  const admins=JSON.parse(JSON.stringify(getAdmins()));
-  if(editId){
-    const idx=admins.findIndex(a=>a.id===editId);if(idx<0){showToast('Not found.','error');btn.textContent='Save Admin';btn.disabled=false;return;}
-    admins[idx].username=username;if(pw)admins[idx].passwordHash=hashPassword(username,pw);
-    if(editId===ME.id){ME.username=username;saveSession(ME);document.getElementById('loggedAsLabel').textContent='👤 '+ME.username+(ME.isSuperAdmin?' (Super Admin)':'');document.getElementById('newUsername').value=username;}
-  }else{
-    if(admins.find(a=>a.username===username)){showToast('Username exists.','error');btn.textContent='Save Admin';btn.disabled=false;return;}
-    admins.push({id:genId(),username,passwordHash:hashPassword(username,pw),isSuperAdmin:false,createdAt:new Date().toISOString()});
+// ═══════════════════════════════════════════════════════════════════
+//  ADMINS  — role-enforced, writes to private ACL gist
+//
+//  owner      → can add/remove superAdmins and admins
+//  superAdmin → can add/remove admins only, NOT superAdmins
+//  admin      → this tab is hidden entirely
+// ═══════════════════════════════════════════════════════════════════
+function renderAdminsList() {
+  const canManage = ME && (ME.role === 'owner' || ME.role === 'superAdmin');
+  document.getElementById('adminAccessDenied').style.display  = canManage ? 'none' : 'block';
+  document.getElementById('adminManagePanel').style.display   = canManage ? 'block' : 'none';
+  if (!canManage) return;
+
+  // Owner can add superAdmins; superAdmins can only add admins
+  const canAddSuperAdmin = ME.role === 'owner';
+  const roleSelect = document.getElementById('adminRole');
+  if (!canAddSuperAdmin) {
+    // Remove superAdmin option from modal if present
+    for (let i = roleSelect.options.length - 1; i >= 0; i--) {
+      if (roleSelect.options[i].value === 'superAdmin') roleSelect.remove(i);
+    }
   }
-  const ok=await pushGist({...DB,admins});
-  btn.textContent='Save Admin';btn.disabled=false;
-  if(ok){closeModal('adminModal');renderAdminsList();showToast(editId?'Updated!':'Admin added!','success');}else showToast('Failed.','error');
-}
-async function deleteAdmin(id){
-  const admin=getAdmins().find(a=>a.id===id);if(!admin)return;
-  if(admin.isSuperAdmin){showToast('Cannot remove Super Admin.','error');return;}
-  if(!confirm(`Remove "${admin.username}"?`))return;
-  const ok=await pushGist({...DB,admins:getAdmins().filter(a=>a.id!==id)});
-  if(ok){renderAdminsList();showToast('Removed.','success');}else showToast('Failed.','error');
+
+  // Build combined list: owner first, then superAdmins, then admins
+  const allUsers = [];
+  if (ACL.ownerLogin) allUsers.push({ githubLogin: ACL.ownerLogin, role: 'owner', addedAt: null });
+  (ACL.superAdmins||[]).forEach(u => allUsers.push({ ...u, role: 'superAdmin' }));
+  (ACL.admins||[]).forEach(u => allUsers.push({ ...u, role: 'admin' }));
+
+  document.getElementById('adminsList').innerHTML = allUsers.map(u => {
+    const badgeHtml =
+      u.role === 'owner'      ? '<span class="owner-badge">👑 Owner</span>' :
+      u.role === 'superAdmin' ? '<span class="superadmin-badge">⭐ Super Admin</span>' :
+                                '<span class="badge" style="background:rgba(255,255,255,.05);border:1px solid var(--cr-border);color:var(--cr-muted);">Admin</span>';
+
+    // Determine if ME can remove this user
+    const canRemove =
+      (ME.role === 'owner' && u.role !== 'owner') ||
+      (ME.role === 'superAdmin' && u.role === 'admin');
+
+    return `<div class="admin-row">
+      <div style="font-size:1.5rem;">👤</div>
+      <div style="flex:1;"><div style="font-weight:700;font-size:.9rem;">@${esc(u.githubLogin)}</div>${u.addedAt ? `<div style="font-size:.72rem;color:var(--cr-muted);">Added: ${fmtDate(u.addedAt)}</div>` : ''}</div>
+      ${badgeHtml}
+      ${canRemove ? `<button class="btn-ghost" style="padding:5px 12px;font-size:.75rem;color:#ff4444;border-color:#ff4444;" onclick="removeAdmin('${esc(u.githubLogin)}','${esc(u.role)}')">Remove</button>` : ''}
+    </div>`;
+  }).join('');
 }
 
-// ══════ SETTINGS ══════
-async function saveSettings(){
-  const newUser=v('newUsername').toLowerCase(),newPw=v('newPassword'),conf=v('confirmPassword'),curPw=v('currentPasswordVerify');
-  if(!newUser||!curPw){showToast('Fill all required fields.','error');return;}
-  if(newPw&&newPw!==conf){showToast('New passwords do not match.','error');return;}
-  const btn=document.getElementById('saveSettingsBtn');btn.innerHTML='Saving...<span class="spinner"></span>';btn.disabled=true;
-  const data=await fetchGist();
-  const me=data&&data.admins.find(a=>a.id===ME.id);
-  if(!me||me.passwordHash!==hashPassword(ME.username,curPw)){showToast('Current password incorrect.','error');btn.textContent='Save Changes';btn.disabled=false;return;}
-  const admins=JSON.parse(JSON.stringify(getAdmins()));
-  const idx=admins.findIndex(a=>a.id===ME.id);
-  admins[idx].username=newUser;if(newPw)admins[idx].passwordHash=hashPassword(newUser,newPw);
-  const ok=await pushGist({...DB,admins});
-  btn.textContent='Save Changes';btn.disabled=false;
-  if(ok){ME.username=newUser;saveSession(ME);document.getElementById('loggedAsLabel').textContent='👤 '+newUser+(ME.isSuperAdmin?' (Super Admin)':'');['newPassword','confirmPassword','currentPasswordVerify'].forEach(id=>document.getElementById(id).value='');showToast('Updated!','success');}
-  else showToast('Failed.','error');
+function openAdminForm() {
+  document.getElementById('editAdminId').value = '';
+  document.getElementById('adminGithubLogin').value = '';
+  // Reset role options based on current user's role
+  const sel = document.getElementById('adminRole');
+  sel.innerHTML = '<option value="admin">Admin (content editing only)</option>';
+  if (ME.role === 'owner') sel.innerHTML += '<option value="superAdmin">Super Admin (can manage admins)</option>';
+  document.getElementById('adminFormTitle').textContent = 'Add Admin';
+  openModal('adminModal');
 }
 
-// ══════ SHORTCUT CAPTURE ══════
+async function saveAdmin() {
+  const githubLogin = v('adminGithubLogin').toLowerCase();
+  const role        = document.getElementById('adminRole').value;
+  if (!githubLogin) { showToast('GitHub username required.', 'error'); return; }
+
+  // Role enforcement — double-check on client side
+  if (role === 'superAdmin' && ME.role !== 'owner') {
+    showToast('Only the owner can add Super Admins.', 'error'); return;
+  }
+  if ((role === 'admin' || role === 'superAdmin') && ME.role === 'admin') {
+    showToast('Admins cannot manage other admins.', 'error'); return;
+  }
+
+  const btn = document.getElementById('saveAdminBtn');
+  btn.innerHTML = 'Saving...<span class="spinner"></span>'; btn.disabled = true;
+
+  try {
+    // Re-fetch ACL fresh before writing to avoid overwrite race
+    await fetchACL();
+
+    // Check not already in list
+    const alreadyExists =
+      ACL.ownerLogin === githubLogin ||
+      (ACL.superAdmins||[]).some(a => a.githubLogin === githubLogin) ||
+      (ACL.admins||[]).some(a => a.githubLogin === githubLogin);
+    if (alreadyExists) { showToast('@' + githubLogin + ' is already in the admin list.', 'error'); btn.textContent='Save'; btn.disabled=false; return; }
+
+    const newEntry = { id: genId(), githubLogin, role, addedAt: new Date().toISOString(), addedBy: ME.githubLogin };
+    const updatedACL = JSON.parse(JSON.stringify(ACL));
+
+    if (role === 'superAdmin') {
+      updatedACL.superAdmins.push(newEntry);
+    } else {
+      updatedACL.admins.push(newEntry);
+    }
+
+    await pushACL(updatedACL);
+    closeModal('adminModal');
+    renderAdminsList();
+    showToast('@' + githubLogin + ' added as ' + role + '.', 'success');
+  } catch(e) {
+    showToast('Failed: ' + e.message, 'error');
+  }
+  btn.textContent = 'Save'; btn.disabled = false;
+}
+
+async function removeAdmin(githubLogin, role) {
+  if (!confirm('Remove @' + githubLogin + ' from admin list?')) return;
+
+  // Role enforcement
+  if (role === 'owner') { showToast('Cannot remove the owner.', 'error'); return; }
+  if (role === 'superAdmin' && ME.role !== 'owner') { showToast('Only the owner can remove Super Admins.', 'error'); return; }
+  if (role === 'admin' && ME.role === 'admin') { showToast('Admins cannot remove other admins.', 'error'); return; }
+
+  try {
+    await fetchACL();
+    const updatedACL = JSON.parse(JSON.stringify(ACL));
+    if (role === 'superAdmin') {
+      updatedACL.superAdmins = updatedACL.superAdmins.filter(a => a.githubLogin !== githubLogin);
+    } else {
+      updatedACL.admins = updatedACL.admins.filter(a => a.githubLogin !== githubLogin);
+    }
+    await pushACL(updatedACL);
+    renderAdminsList();
+    showToast('@' + githubLogin + ' removed.', 'success');
+  } catch(e) {
+    showToast('Failed: ' + e.message, 'error');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SETTINGS helpers
+// ═══════════════════════════════════════════════════════════════════
+
+/** Repo config is stored in localStorage only (not sensitive — just owner/reponame) */
+function getLocalRepoCfg()      { try { return JSON.parse(localStorage.getItem('cr_repo_cfg') || 'null'); } catch { return null; } }
+function saveLocalRepoCfg(cfg)  { localStorage.setItem('cr_repo_cfg', JSON.stringify(cfg)); }
+
+function saveRepoSettings() {
+  const owner  = v('repoOwnerInput');
+  const repo   = v('repoNameInput');
+  const status = document.getElementById('repoSettingsStatus');
+  if (!owner || !repo) { status.textContent = '⚠ Enter both fields'; status.style.color = '#ff9900'; return; }
+  saveLocalRepoCfg({ repoOwner: owner, repoName: repo });
+  status.textContent = '✔ Saved!'; status.style.color = '#00cc44';
+  setTimeout(() => status.textContent = '', 3000);
+}
+
+async function saveAnalyticsToken() {
+  const btn = event.target; btn.textContent = 'Saving...'; btn.disabled = true;
+  const t = v('analyticsTokenInput');
+  const status = document.getElementById('analyticsTokenStatus');
+  if (!t) { status.textContent = 'Enter a token first'; status.style.color = '#ff4444'; btn.textContent='Save Analytics Token'; btn.disabled=false; return; }
+
+  try {
+    // Validate token can read gist
+    const gistId = await getPublicGistId();
+    if (!gistId) { status.textContent = 'No public Gist ID in site-config.json'; status.style.color = '#ff4444'; btn.textContent='Save Analytics Token'; btn.disabled=false; return; }
+    const testR = await fetch('https://api.github.com/gists/' + gistId, { headers: { 'Authorization': 'Bearer ' + t, 'Accept': 'application/vnd.github.v3+json' } });
+    if (!testR.ok) { status.textContent = 'Token invalid or no Gist access'; status.style.color = '#ff4444'; btn.textContent='Save Analytics Token'; btn.disabled=false; return; }
+
+    const cfg = getLocalRepoCfg();
+    if (!cfg || !cfg.repoOwner || !cfg.repoName) {
+      // No repo configured — save to localStorage only
+      localStorage.setItem('cr_analytics_token', t);
+      status.textContent = '⚠ Saved locally only (configure Repo Settings first to deploy to site-config.json)';
+      status.style.color = '#ff9900'; btn.textContent='Save Analytics Token'; btn.disabled=false; return;
+    }
+
+    const apiUrl = 'https://api.github.com/repos/' + cfg.repoOwner + '/' + cfg.repoName + '/contents/site-config.json';
+    let sha = null; let currentConfig = { gistId };
+    const get = await fetch(apiUrl + '?t=' + Date.now(), { cache: 'no-store', headers: { 'Authorization': 'Bearer ' + _sessionToken, 'Accept': 'application/vnd.github.v3+json' } });
+    if (get.ok) { const gd = await get.json(); sha = gd.sha; try { currentConfig = JSON.parse(atob(gd.content.replace(/\n/g,''))); } catch(e) {} }
+    currentConfig.analyticsToken = t;
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(currentConfig, null, 2))));
+    const body = { message: 'chore: update analytics token', content }; if (sha) body.sha = sha;
+    const put = await fetch(apiUrl, { method:'PUT', headers:{ 'Authorization':'Bearer ' + _sessionToken, 'Accept':'application/vnd.github.v3+json', 'Content-Type':'application/json' }, body: JSON.stringify(body) });
+    if (put.ok) { status.textContent = '✔ Saved to site-config.json'; status.style.color = '#00cc44'; document.getElementById('analyticsTokenInput').value = ''; }
+    else { const eb = await put.json().catch(()=>({})); status.textContent = 'Failed (' + put.status + '): ' + (eb.message||'check token has repo scope for repo writes'); status.style.color = '#ff4444'; }
+  } catch(e) { status.textContent = 'Error: ' + e.message; status.style.color = '#ff4444'; }
+  btn.textContent = 'Save Analytics Token'; btn.disabled = false;
+}
+
+async function clearAnalyticsToken() {
+  const status = document.getElementById('analyticsTokenStatus');
+  const cfg = getLocalRepoCfg();
+  if (!cfg || !cfg.repoOwner || !cfg.repoName) { localStorage.removeItem('cr_analytics_token'); status.textContent = 'Cleared locally'; status.style.color = '#888'; return; }
+  try {
+    const apiUrl = 'https://api.github.com/repos/' + cfg.repoOwner + '/' + cfg.repoName + '/contents/site-config.json';
+    const get = await fetch(apiUrl, { headers: { 'Authorization':'Bearer ' + _sessionToken, 'Accept':'application/vnd.github.v3+json' } });
+    if (!get.ok) { status.textContent = 'Could not read site-config.json'; status.style.color='#ff4444'; return; }
+    const gd = await get.json();
+    let cc = {}; try { cc = JSON.parse(atob(gd.content.replace(/\n/g,''))); } catch(e) {}
+    delete cc.analyticsToken;
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(cc, null, 2))));
+    await fetch(apiUrl, { method:'PUT', headers:{ 'Authorization':'Bearer ' + _sessionToken, 'Accept':'application/vnd.github.v3+json', 'Content-Type':'application/json' }, body: JSON.stringify({ message:'chore: remove analytics token', content, sha: gd.sha }) });
+    status.textContent = 'Analytics token removed'; status.style.color = '#888';
+  } catch(e) { status.textContent = 'Error: ' + e.message; status.style.color = '#ff4444'; }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SHORTCUT CAPTURE
+// ═══════════════════════════════════════════════════════════════════
 let capturing = false;
-function startCaptureShortcut() {
-  capturing = true;
-  document.getElementById('shortcutDisplay').value = 'Press keys...';
-  document.addEventListener('keydown', captureHandler);
-}
+function startCaptureShortcut() { capturing = true; document.getElementById('shortcutDisplay').value = 'Press keys...'; document.addEventListener('keydown', captureHandler); }
 function captureHandler(e) {
-  if (!capturing) return;
-  e.preventDefault();
+  if (!capturing) return; e.preventDefault();
   const keys = [];
-  if (e.ctrlKey) keys.push('ctrl');
-  if (e.altKey) keys.push('alt');
-  if (e.shiftKey) keys.push('shift');
-  if (e.metaKey) keys.push('meta');
-  // Only save when a non‑modifier key is pressed
+  if (e.ctrlKey) keys.push('ctrl'); if (e.altKey) keys.push('alt'); if (e.shiftKey) keys.push('shift'); if (e.metaKey) keys.push('meta');
   if (e.key && !['Control','Alt','Shift','Meta'].includes(e.key)) {
     keys.push(e.key.toLowerCase());
     const shortcut = keys.join('+');
     localStorage.setItem('cr_admin_shortcut', shortcut);
     document.getElementById('shortcutDisplay').value = formatShortcut(shortcut);
-    capturing = false;
-    document.removeEventListener('keydown', captureHandler);
+    capturing = false; document.removeEventListener('keydown', captureHandler);
     showToast('Shortcut saved!', 'success');
   }
-  // If no main key yet, do nothing (wait for further keys)
 }
-function resetShortcut() {
-  localStorage.setItem('cr_admin_shortcut', 'ctrl+alt+a');
-  document.getElementById('shortcutDisplay').value = 'Ctrl+Alt+A';
-  showToast('Reset to default', 'success');
+function resetShortcut() { localStorage.setItem('cr_admin_shortcut','ctrl+alt+a'); document.getElementById('shortcutDisplay').value='Ctrl+Alt+A'; showToast('Reset to default','success'); }
+function formatShortcut(s) { return s.split('+').map(p => p.charAt(0).toUpperCase()+p.slice(1)).join('+'); }
+
+// ═══════════════════════════════════════════════════════════════════
+//  SCHEDULED AUTO-PUBLISH
+// ═══════════════════════════════════════════════════════════════════
+async function checkScheduled() {
+  if (!DB || !ME) return;
+  const now = new Date(); let changed = false;
+  const articles = getArticles().map(a => { if (a.status==='scheduled' && a.scheduledAt && new Date(a.scheduledAt)<=now) { changed=true; return {...a,status:'published',published:true}; } return a; });
+  if (changed) { try { await pushPublicDB({...DB,articles}); renderArticlesList(); showToast('Scheduled article(s) published!','success'); } catch(e){} }
 }
-function formatShortcut(s) {
-  return s.split('+').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('+');
-}
+setInterval(checkScheduled, 60000);
 
-// ══════ SCHEDULED AUTO-PUBLISH ══════
-async function checkScheduled(){
-  if(!DB||!ME)return;
-  const now=new Date();let changed=false;
-  const articles=getArticles().map(a=>{if(a.status==='scheduled'&&a.scheduledAt&&new Date(a.scheduledAt)<=now){changed=true;return{...a,status:'published',published:true};}return a;});
-  if(changed){await pushGist({...DB,articles});renderArticlesList();showToast('Scheduled article(s) published!','success');}
-}
-setInterval(checkScheduled,60000);
-
-// ══════ UTILS ══════
-function v(id){return(document.getElementById(id).value||'').trim();}
-function err(el,msg){el.textContent=msg;el.style.display='block';}
-function openModal(id){document.getElementById(id).style.display='block';}
-function closeModal(id){document.getElementById(id).style.display='none';}
-function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function fmtDate(d){if(!d)return'';return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
-let _tt;
-function showToast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(type?' '+type:'');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3500);}
-
-// ══════ STATS — native Canvas 2D, no external library ══════
-
+// ═══════════════════════════════════════════════════════════════════
+//  STATS — native Canvas 2D
+// ═══════════════════════════════════════════════════════════════════
 function drawBarChart(canvasId, labels, datasets, legend){
-  const cv=document.getElementById(canvasId);
-  if(!cv)return;
-  // Use fixed pixel size — never changes, never loops
-  const W=cv.width||460, H=cv.height||180;
-  cv.style.height=H+'px';
-  const ctx=cv.getContext('2d');
-  ctx.clearRect(0,0,W,H);
-  const PL=34,PR=8,PT=20,PB=28;
-  const cW=W-PL-PR, cH=H-PT-PB;
-  const allV=datasets.flatMap(d=>d.data);
-  const mx=Math.max(...allV,1);
-  const n=labels.length;
-  const gW=cW/n;
-  const bW=Math.max(2,gW/datasets.length-2);
-  // grid
-  for(let i=0;i<=4;i++){
-    const y=PT+cH-(i/4)*cH;
-    ctx.strokeStyle='#222';ctx.lineWidth=1;
-    ctx.beginPath();ctx.moveTo(PL,y);ctx.lineTo(W-PR,y);ctx.stroke();
-    ctx.fillStyle='#555';ctx.font='9px sans-serif';ctx.textAlign='right';
-    ctx.fillText(Math.round(mx*i/4),PL-3,y+3);
-  }
-  // bars
-  datasets.forEach((ds,di)=>{
-    ds.data.forEach((v,xi)=>{
-      const bh=(v/mx)*cH;
-      const x=PL+xi*gW+di*(bW+2)+2;
-      const y=PT+cH-bh;
-      ctx.fillStyle=ds.color;
-      ctx.beginPath();
-      if(ctx.roundRect)ctx.roundRect(x,y,bW,Math.max(bh,1),2);
-      else ctx.rect(x,y,bW,Math.max(bh,1));
-      ctx.fill();
-    });
-  });
-  // x labels
-  ctx.fillStyle='#555';ctx.font='9px sans-serif';ctx.textAlign='center';
-  const ev=Math.ceil(n/10);
-  labels.forEach((l,i)=>{
-    if(i%ev!==0&&i!==n-1)return;
-    ctx.fillText(l,PL+i*gW+gW/2,H-5);
-  });
-  // legend
-  if(legend){
-    let lx=PL;
-    legend.forEach((txt,i)=>{
-      ctx.fillStyle=datasets[i].color;ctx.fillRect(lx,4,10,8);
-      ctx.fillStyle='#888';ctx.font='9px sans-serif';ctx.textAlign='left';
-      ctx.fillText(txt,lx+13,11);
-      lx+=ctx.measureText(txt).width+28;
-    });
-  }
+  const cv=document.getElementById(canvasId); if(!cv)return;
+  const W=cv.width||460, H=cv.height||180; cv.style.height=H+'px';
+  const ctx=cv.getContext('2d'); ctx.clearRect(0,0,W,H);
+  const PL=34,PR=8,PT=20,PB=28,cW=W-PL-PR,cH=H-PT-PB;
+  const mx=Math.max(...datasets.flatMap(d=>d.data),1), n=labels.length, gW=cW/n, bW=Math.max(2,gW/datasets.length-2);
+  for(let i=0;i<=4;i++){const y=PT+cH-(i/4)*cH;ctx.strokeStyle='#222';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(PL,y);ctx.lineTo(W-PR,y);ctx.stroke();ctx.fillStyle='#555';ctx.font='9px sans-serif';ctx.textAlign='right';ctx.fillText(Math.round(mx*i/4),PL-3,y+3);}
+  datasets.forEach((ds,di)=>{ds.data.forEach((v,xi)=>{const bh=(v/mx)*cH,x=PL+xi*gW+di*(bW+2)+2,y=PT+cH-bh;ctx.fillStyle=ds.color;ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x,y,bW,Math.max(bh,1),2);else ctx.rect(x,y,bW,Math.max(bh,1));ctx.fill();});});
+  ctx.fillStyle='#555';ctx.font='9px sans-serif';ctx.textAlign='center';const ev=Math.ceil(n/10);labels.forEach((l,i)=>{if(i%ev!==0&&i!==n-1)return;ctx.fillText(l,PL+i*gW+gW/2,H-5);});
+  if(legend){let lx=PL;legend.forEach((txt,i)=>{ctx.fillStyle=datasets[i].color;ctx.fillRect(lx,4,10,8);ctx.fillStyle='#888';ctx.font='9px sans-serif';ctx.textAlign='left';ctx.fillText(txt,lx+13,11);lx+=ctx.measureText(txt).width+28;});}
 }
-
 function drawLineChart(canvasId, labels, data, color){
-  const cv=document.getElementById(canvasId);
-  if(!cv)return;
-  const W=cv.width||460, H=cv.height||180;
-  cv.style.height=H+'px';
-  const ctx=cv.getContext('2d');
-  ctx.clearRect(0,0,W,H);
-  const PL=30,PR=8,PT=12,PB=24;
-  const cW=W-PL-PR, cH=H-PT-PB;
-  const mx=Math.max(...data,1);
-  const n=data.length;
-  const xp=i=>PL+(n<2?cW/2:i/(n-1)*cW);
-  const yp=v=>PT+cH-(v/mx)*cH;
-  // grid
-  for(let i=0;i<=4;i++){
-    const y=PT+cH-(i/4)*cH;
-    ctx.strokeStyle='#222';ctx.lineWidth=1;
-    ctx.beginPath();ctx.moveTo(PL,y);ctx.lineTo(W-PR,y);ctx.stroke();
-    ctx.fillStyle='#555';ctx.font='9px sans-serif';ctx.textAlign='right';
-    ctx.fillText(Math.round(mx*i/4),PL-3,y+3);
-  }
-  // x labels
-  ctx.fillStyle='#555';ctx.font='9px sans-serif';ctx.textAlign='center';
-  const ev=Math.ceil(n/8);
-  labels.forEach((l,i)=>{if(i%ev!==0&&i!==n-1)return;ctx.fillText(l,xp(i),H-4);});
-  // fill
-  const gr=ctx.createLinearGradient(0,PT,0,PT+cH);
-  gr.addColorStop(0,'rgba(255,0,0,0.25)');gr.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.beginPath();
-  data.forEach((v,i)=>i===0?ctx.moveTo(xp(i),yp(v)):ctx.lineTo(xp(i),yp(v)));
-  ctx.lineTo(xp(n-1),PT+cH);ctx.lineTo(xp(0),PT+cH);ctx.closePath();
-  ctx.fillStyle=gr;ctx.fill();
-  // line
-  ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=2;
-  data.forEach((v,i)=>i===0?ctx.moveTo(xp(i),yp(v)):ctx.lineTo(xp(i),yp(v)));
-  ctx.stroke();
-  // dots
-  ctx.fillStyle=color;
-  data.forEach((v,i)=>{ctx.beginPath();ctx.arc(xp(i),yp(v),2.5,0,Math.PI*2);ctx.fill();});
+  const cv=document.getElementById(canvasId); if(!cv)return;
+  const W=cv.width||460, H=cv.height||180; cv.style.height=H+'px';
+  const ctx=cv.getContext('2d'); ctx.clearRect(0,0,W,H);
+  const PL=30,PR=8,PT=12,PB=24,cW=W-PL-PR,cH=H-PT-PB;
+  const mx=Math.max(...data,1), n=data.length;
+  const xp=i=>PL+(n<2?cW/2:i/(n-1)*cW), yp=v=>PT+cH-(v/mx)*cH;
+  for(let i=0;i<=4;i++){const y=PT+cH-(i/4)*cH;ctx.strokeStyle='#222';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(PL,y);ctx.lineTo(W-PR,y);ctx.stroke();ctx.fillStyle='#555';ctx.font='9px sans-serif';ctx.textAlign='right';ctx.fillText(Math.round(mx*i/4),PL-3,y+3);}
+  ctx.fillStyle='#555';ctx.font='9px sans-serif';ctx.textAlign='center';const ev=Math.ceil(n/8);labels.forEach((l,i)=>{if(i%ev!==0&&i!==n-1)return;ctx.fillText(l,xp(i),H-4);});
+  const gr=ctx.createLinearGradient(0,PT,0,PT+cH);gr.addColorStop(0,'rgba(255,0,0,0.25)');gr.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.beginPath();data.forEach((v,i)=>i===0?ctx.moveTo(xp(i),yp(v)):ctx.lineTo(xp(i),yp(v)));ctx.lineTo(xp(n-1),PT+cH);ctx.lineTo(xp(0),PT+cH);ctx.closePath();ctx.fillStyle=gr;ctx.fill();
+  ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=2;data.forEach((v,i)=>i===0?ctx.moveTo(xp(i),yp(v)):ctx.lineTo(xp(i),yp(v)));ctx.stroke();
+  ctx.fillStyle=color;data.forEach((v,i)=>{ctx.beginPath();ctx.arc(xp(i),yp(v),2.5,0,Math.PI*2);ctx.fill();});
 }
-
 function drawDonutChart(canvasId, slices){
-  const cv=document.getElementById(canvasId);
-  if(!cv)return;
-  const S=Math.min(cv.width,cv.height)||150;
-  cv.width=S;cv.height=S;
-  cv.style.height=S+'px';
-  const ctx=cv.getContext('2d');
-  ctx.clearRect(0,0,S,S);
-  const total=slices.reduce((s,sl)=>s+sl.value,0)||1;
-  const cx=S/2,cy=S/2,outer=S*0.44,inner=S*0.26;
+  const cv=document.getElementById(canvasId); if(!cv)return;
+  const S=Math.min(cv.width,cv.height)||150; cv.width=S; cv.height=S; cv.style.height=S+'px';
+  const ctx=cv.getContext('2d'); ctx.clearRect(0,0,S,S);
+  const total=slices.reduce((s,sl)=>s+sl.value,0)||1, cx=S/2, cy=S/2, outer=S*0.44, inner=S*0.26;
   let angle=-Math.PI/2;
-  slices.forEach(sl=>{
-    if(!sl.value)return;
-    const sweep=(sl.value/total)*Math.PI*2;
-    ctx.beginPath();ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,outer,angle,angle+sweep);
-    ctx.closePath();ctx.fillStyle=sl.color;ctx.fill();
-    angle+=sweep;
-  });
-  ctx.beginPath();ctx.arc(cx,cy,inner,0,Math.PI*2);
-  ctx.fillStyle='#111';ctx.fill();
-  if(slices.every(s=>!s.value)){
-    ctx.fillStyle='#444';ctx.font='11px sans-serif';ctx.textAlign='center';
-    ctx.fillText('No data',cx,cy+4);
-  }
+  slices.forEach(sl=>{if(!sl.value)return;const sweep=(sl.value/total)*Math.PI*2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,outer,angle,angle+sweep);ctx.closePath();ctx.fillStyle=sl.color;ctx.fill();angle+=sweep;});
+  ctx.beginPath();ctx.arc(cx,cy,inner,0,Math.PI*2);ctx.fillStyle='#111';ctx.fill();
+  if(slices.every(s=>!s.value)){ctx.fillStyle='#444';ctx.font='11px sans-serif';ctx.textAlign='center';ctx.fillText('No data',cx,cy+4);}
 }
 
 function renderStats(){
-  if(!DB||!DB.analytics){
-    document.getElementById('statsKpis').innerHTML='<div style="color:var(--cr-muted);font-size:.85rem;grid-column:1/-1;padding:2rem;text-align:center;">No analytics data yet. Visit the public site to start tracking.</div>';
-    return;
-  }
-  const a=DB.analytics;
-  const days=parseInt(document.getElementById('statsDays')?.value||30);
-  const today=new Date();
-  const dateKeys=[];
+  if(!DB||!DB.analytics){document.getElementById('statsKpis').innerHTML='<div style="color:var(--cr-muted);font-size:.85rem;grid-column:1/-1;padding:2rem;text-align:center;">No analytics data yet. Visit the public site to start tracking.</div>';return;}
+  const a=DB.analytics, days=parseInt(document.getElementById('statsDays')?.value||30);
+  const today=new Date(), dateKeys=[];
   for(let i=days-1;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);dateKeys.push(d.toISOString().slice(0,10));}
-  let rangeViews=0,rangeUnique=0;
-  const dailyViews=[],dailyUnique=[];
-  dateKeys.forEach(dk=>{
-    const day=(a.daily&&a.daily[dk])||{views:0,unique:0};
-    rangeViews+=day.views||0;rangeUnique+=day.unique||0;
-    dailyViews.push(day.views||0);dailyUnique.push(day.unique||0);
-  });
-  const totalViews=a.totalViews||0,totalUnique=a.totalUnique||0;
-  const avgDaily=days>0?Math.round(rangeViews/days):0;
-  const devices=a.devices||{desktop:0,mobile:0,tablet:0};
-  const totalDev=Object.values(devices).reduce((s,v)=>s+v,0)||1;
-
-  // KPI cards
-  const kpis=[
-    {label:'Total Views',val:totalViews,icon:'👁',color:'#ff0000'},
-    {label:'Unique Visitors',val:totalUnique,icon:'👤',color:'#ff6600'},
-    {label:'Views ('+days+'d)',val:rangeViews,icon:'📈',color:'#ff3333'},
-    {label:'Unique ('+days+'d)',val:rangeUnique,icon:'🆕',color:'#ff9900'},
-    {label:'Avg/Day',val:avgDaily,icon:'📅',color:'#cc0000'},
-    {label:'Articles',val:(DB.articles||[]).length,icon:'📰',color:'#888'},
-  ];
-  document.getElementById('statsKpis').innerHTML=kpis.map(k=>
-    '<div class="panel" style="text-align:center;padding:1rem;">'+
-    '<div style="font-size:1.4rem;margin-bottom:.25rem;">'+k.icon+'</div>'+
-    '<div style="font-family:Orbitron,monospace;font-size:1.4rem;font-weight:900;color:'+k.color+';">'+k.val.toLocaleString()+'</div>'+
-    '<div style="font-size:.68rem;color:var(--cr-muted);margin-top:.25rem;font-family:Orbitron,monospace;letter-spacing:1px;">'+k.label+'</div>'+
-    '</div>'
-  ).join('');
-
+  let rangeViews=0,rangeUnique=0;const dailyViews=[],dailyUnique=[];
+  dateKeys.forEach(dk=>{const day=(a.daily&&a.daily[dk])||{views:0,unique:0};rangeViews+=day.views||0;rangeUnique+=day.unique||0;dailyViews.push(day.views||0);dailyUnique.push(day.unique||0);});
+  const totalViews=a.totalViews||0,totalUnique=a.totalUnique||0,avgDaily=days>0?Math.round(rangeViews/days):0;
+  const devices=a.devices||{desktop:0,mobile:0,tablet:0},totalDev=Object.values(devices).reduce((s,v)=>s+v,0)||1;
+  const kpis=[{label:'Total Views',val:totalViews,icon:'👁',color:'#ff0000'},{label:'Unique Visitors',val:totalUnique,icon:'👤',color:'#ff6600'},{label:'Views ('+days+'d)',val:rangeViews,icon:'📈',color:'#ff3333'},{label:'Unique ('+days+'d)',val:rangeUnique,icon:'🆕',color:'#ff9900'},{label:'Avg/Day',val:avgDaily,icon:'📅',color:'#cc0000'},{label:'Articles',val:(DB.articles||[]).length,icon:'📰',color:'#888'}];
+  document.getElementById('statsKpis').innerHTML=kpis.map(k=>'<div class="panel" style="text-align:center;padding:1rem;"><div style="font-size:1.4rem;margin-bottom:.25rem;">'+k.icon+'</div><div style="font-family:Orbitron,monospace;font-size:1.4rem;font-weight:900;color:'+k.color+';">'+k.val.toLocaleString()+'</div><div style="font-size:.68rem;color:var(--cr-muted);margin-top:.25rem;font-family:Orbitron,monospace;letter-spacing:1px;">'+k.label+'</div></div>').join('');
   const shortLabels=dateKeys.map(d=>{const p=d.split('-');return p[2]+'/'+p[1];});
-  drawBarChart('chartDaily',shortLabels,[
-    {data:dailyViews,color:'rgba(255,0,0,0.75)'},
-    {data:dailyUnique,color:'rgba(255,120,0,0.75)'}
-  ],['Views','Unique']);
+  drawBarChart('chartDaily',shortLabels,[{data:dailyViews,color:'rgba(255,0,0,0.75)'},{data:dailyUnique,color:'rgba(255,120,0,0.75)'}],['Views','Unique']);
   drawLineChart('chartHourly',Array.from({length:24},(_,i)=>i+'h'),a.hourly||Array(24).fill(0),'#ff0000');
-
-  const devSlices=[
-    {label:'Desktop',value:devices.desktop||0,color:'#ff0000'},
-    {label:'Mobile',value:devices.mobile||0,color:'#ff6600'},
-    {label:'Tablet',value:devices.tablet||0,color:'#ff9900'},
-  ];
+  const devSlices=[{label:'Desktop',value:devices.desktop||0,color:'#ff0000'},{label:'Mobile',value:devices.mobile||0,color:'#ff6600'},{label:'Tablet',value:devices.tablet||0,color:'#ff9900'}];
   drawDonutChart('chartDevices',devSlices);
-  document.getElementById('deviceLegend').innerHTML=devSlices.map(sl=>{
-    const icons={Desktop:'🖥',Mobile:'📱',Tablet:'📟'};
-    return '<div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="color:'+sl.color+'">'+icons[sl.label]+' '+sl.label+'</span><span style="font-weight:700;">'+Math.round(sl.value/totalDev*100)+'%</span></div>';
-  }).join('');
-
-  const sources=a.sources||{};
-  const srcColors=['#ff0000','#ff4400','#ff6600','#ff8800','#ffaa00','#ffcc00'];
-  const srcIcons={direct:'🔗',search:'🔍',youtube:'▶',twitter:'🐦',facebook:'👥',referral:'↩'};
-  const srcKeys=Object.keys(sources).filter(k=>sources[k]>0);
-  const srcSlices=srcKeys.map((k,i)=>({label:k,value:sources[k],color:srcColors[i%srcColors.length]}));
+  document.getElementById('deviceLegend').innerHTML=devSlices.map(sl=>{const icons={Desktop:'🖥',Mobile:'📱',Tablet:'📟'};return '<div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="color:'+sl.color+'">'+icons[sl.label]+' '+sl.label+'</span><span style="font-weight:700;">'+Math.round(sl.value/totalDev*100)+'%</span></div>';}).join('');
+  const sources=a.sources||{},srcColors=['#ff0000','#ff4400','#ff6600','#ff8800','#ffaa00','#ffcc00'],srcIcons={direct:'🔗',search:'🔍',youtube:'▶',twitter:'🐦',facebook:'👥',referral:'↩'};
+  const srcKeys=Object.keys(sources).filter(k=>sources[k]>0),srcSlices=srcKeys.map((k,i)=>({label:k,value:sources[k],color:srcColors[i%srcColors.length]}));
   drawDonutChart('chartSources',srcSlices);
   const totalSrc=srcSlices.reduce((s,sl)=>s+sl.value,0)||1;
-  document.getElementById('sourceLegend').innerHTML=srcSlices.map(sl=>{
-    const n=sl.label.charAt(0).toUpperCase()+sl.label.slice(1);
-    return '<div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="color:'+sl.color+'">'+(srcIcons[sl.label]||'•')+' '+n+'</span><span style="font-weight:700;">'+Math.round(sl.value/totalSrc*100)+'%</span></div>';
-  }).join('');
-
-  const topArt=a.topArticles||{},articles=DB.articles||[];
-  const sorted=Object.entries(topArt).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  const maxC=sorted.length?sorted[0][1]:1;
-  document.getElementById('topArticlesStats').innerHTML=sorted.length?sorted.map(function(entry){
-    const id=entry[0],clicks=entry[1];
-    const art=articles.find(x=>x.id===id);
-    const title=art?(art.title.length>28?art.title.slice(0,28)+'…':art.title):'Unknown';
-    const pct=Math.round(clicks/maxC*100);
-    return '<div style="margin-bottom:.65rem;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:.75rem;"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:72%;">'+esc(title)+'</span><span style="color:var(--cr-red);font-weight:700;">'+clicks+'</span></div><div style="background:var(--cr-border);border-radius:3px;height:4px;"><div style="background:var(--cr-red);width:'+pct+'%;height:4px;border-radius:3px;"></div></div></div>';
-  }).join(''):'<div style="color:var(--cr-muted);font-size:.8rem;padding:.5rem 0;">No clicks tracked yet.</div>';
+  document.getElementById('sourceLegend').innerHTML=srcSlices.map(sl=>{const n=sl.label.charAt(0).toUpperCase()+sl.label.slice(1);return '<div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="color:'+sl.color+'">'+(srcIcons[sl.label]||'•')+' '+n+'</span><span style="font-weight:700;">'+Math.round(sl.value/totalSrc*100)+'%</span></div>';}).join('');
+  const topArt=a.topArticles||{},articles=DB.articles||[],sorted=Object.entries(topArt).sort((a,b)=>b[1]-a[1]).slice(0,6),maxC=sorted.length?sorted[0][1]:1;
+  document.getElementById('topArticlesStats').innerHTML=sorted.length?sorted.map(function(entry){const id=entry[0],clicks=entry[1],art=articles.find(x=>x.id===id),title=art?(art.title.length>28?art.title.slice(0,28)+'…':art.title):'Unknown',pct=Math.round(clicks/maxC*100);return '<div style="margin-bottom:.65rem;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:.75rem;"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:72%;">'+esc(title)+'</span><span style="color:var(--cr-red);font-weight:700;">'+clicks+'</span></div><div style="background:var(--cr-border);border-radius:3px;height:4px;"><div style="background:var(--cr-red);width:'+pct+'%;height:4px;border-radius:3px;"></div></div></div>';}).join(''):'<div style="color:var(--cr-muted);font-size:.8rem;padding:.5rem 0;">No clicks tracked yet.</div>';
 }
 
-['articleModal','adModal','adminModal'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))closeModal(id);});});
+// ═══════════════════════════════════════════════════════════════════
+//  MODAL CLOSE ON BACKDROP CLICK
+// ═══════════════════════════════════════════════════════════════════
+['articleModal','adModal','adminModal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => { if (e.target === document.getElementById(id)) closeModal(id); });
+});
 </script>
 </body>
-
 </html>
-
-
