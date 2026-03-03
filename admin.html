@@ -937,7 +937,7 @@ function openAdminForm() {
 }
 
 async function saveAdmin() {
-  const githubLogin = v('adminGithubLogin').toLowerCase();
+  const githubLogin = v('adminGithubLogin');
   const role        = document.getElementById('adminRole').value;
   if (!githubLogin) { showToast('GitHub username required.', 'error'); return; }
 
